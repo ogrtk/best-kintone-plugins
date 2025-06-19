@@ -1,6 +1,6 @@
 {
 	"name": "@ogrtk/kvcust-show-lastupdate",
-	"version": "1.0.1",
+	"version": "1.0.0",
 	"type": "module",
 	"main": "kv-index.js",
 	"scripts": {
@@ -12,7 +12,8 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/ogrtk/kvcust-show-lastupdate.git"
+		"url": "https://github.com/ogrtk/kvcust-show-lastupdate.git",
+		"directory": "packages/kvcust-show-lastupdate"
 	},
 	"keywords": [],
 	"author": "",
