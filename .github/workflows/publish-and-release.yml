@@ -180,7 +180,7 @@ jobs:
       - name: Publish and release per updated package
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.PAT_FOR_PACKAGES }}
         run: |
           for pkg in ${{ needs.detect-version-change.outputs.changed_packages }}; do
             pkg=$(echo "$pkg" | xargs)
