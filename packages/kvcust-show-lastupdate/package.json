@@ -10,6 +10,10 @@
 		"dev": "vite dev",
 		"build": "pnpm cleanup && pnpm copy"
 	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ogrtk/kvcust-show-lastupdate.git"
+	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
