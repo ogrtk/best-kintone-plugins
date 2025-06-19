@@ -1,5 +1,11 @@
 # @ogrtk/kvcust-show-lastupdate
 
+## 1.0.1
+
+### Patch Changes
+
+- b151d51: retry
+
 ## 1.0.0
 
 ### Major Changes
