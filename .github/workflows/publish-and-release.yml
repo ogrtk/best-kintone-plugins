@@ -1,0 +1,247 @@
+name: Version and Release (per project)
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+  packages: write
+
+jobs:
+  detect-changeset:
+    runs-on: ubuntu-latest
+    outputs:
+      has_changesets: ${{ steps.check.outputs.has_changesets }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for changeset files
+        id: check
+        run: |
+          if [ ! -d .changeset ]; then
+            echo "ℹ️ .changeset directory does not exist"
+            echo "has_changesets=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          CHANGES=$(find .changeset -type f -name "*.md" ! -name "README.md")
+
+          if [ -n "$CHANGES" ]; then
+            echo "✅ Found changeset md files"
+            echo "has_changesets=true" >> $GITHUB_OUTPUT
+          else
+            echo "ℹ️ No changeset files except README.md"
+            echo "has_changesets=false" >> $GITHUB_OUTPUT
+          fi
+
+  prepare-version-pr:
+    needs: detect-changeset
+    if: needs.detect-changeset.outputs.has_changesets == 'true'
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.PAT_FOR_PACKAGES }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          pnpm install
+
+      - name: Validate release config
+        run: bash .github/scripts/validate-release-config.sh
+
+      - name: Create version PR
+        uses: changesets/action@v1
+        with:
+          version: pnpm changeset version
+          commit: "chore: version packages"
+          title: "Version Packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  detect-version-change:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.check.outputs.version_change }}
+      changed_packages: ${{ steps.check.outputs.changed_packages }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect updated packages with version field changes
+        id: check
+        run: |
+          git fetch origin main
+          CHANGED=$(git diff --name-only HEAD^ HEAD | grep 'packages/.*/package.json' || true)
+
+          UPDATED=()
+          for f in $CHANGED; do
+            if git diff HEAD^ HEAD -- "$f" | grep -q '"version":'; then
+              pkg=$(echo "$f" | sed -E 's|packages/([^/]+)/package.json|\1|')
+              UPDATED+=("$pkg")
+            fi
+          done
+
+          if [ ${#UPDATED[@]} -gt 0 ]; then
+            echo "version_change=true" >> $GITHUB_OUTPUT
+            echo "changed_packages=${UPDATED[*]}" >> $GITHUB_OUTPUT
+          else
+            echo "version_change=false" >> $GITHUB_OUTPUT
+          fi
+
+  publish-release:
+    needs: detect-version-change
+    if: needs.detect-version-change.outputs.should_run == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@ogrtk'
+
+      - name: Install dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PAT_FOR_PACKAGES }}
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+
+      - name: Validate release configuration
+        run: bash .github/scripts/validate-release-config.sh
+
+      - name: Restore certificate files
+        run: |
+          mkdir -p certificate
+          echo "${CERTIFICATE_CRT}" | base64 -d > certificate/localhost.crt
+          echo "${CERTIFICATE_KEY}" | base64 -d > certificate/localhost.key
+
+      # - name: Build updated packages
+      #   run: |
+          # UPDATED="${{ needs.detect-version-change.outputs.changed_packages }}"
+      #     FILTERS=""
+      #     for pkg in $UPDATED; do
+      #       pkg=$(echo "$pkg" | xargs)  # 空白除去
+      #       NAME=$(node -p "require('./packages/$pkg/package.json').name")
+      #       FILTERS="$FILTERS --filter $NAME..."
+      #     done
+      #     echo "Running: pnpm $FILTERS run build"
+      #     pnpm $FILTERS run build
+      - name: Build updated packages with PPK restore (PPK_STORE方式)
+        run: |
+          UPDATED="${{ needs.detect-version-change.outputs.changed_packages }}"
+          FILTERS=""
+          echo "$PPK_STORE" > ppk_store.json
+
+          for pkg in $UPDATED; do
+            pkg=$(echo "$pkg" | xargs)
+            NAME=$(node -p "require('./packages/$pkg/package.json').name")
+            CONFIG="packages/$pkg/.releaseconfig.json"
+            REQUIRE_PPK=$(jq -r .requirePpk "$CONFIG")
+
+            if [ "$REQUIRE_PPK" == "true" ]; then
+              echo "Restoring ppk for $NAME..."
+              PPK_VALUE=$(jq -r --arg name "$NAME" '.[$name]' ppk_store.json)
+
+              if [ "$PPK_VALUE" == "null" ] || [ -z "$PPK_VALUE" ]; then
+                echo "❌ PPK not found for $NAME"
+                exit 1
+              fi
+
+              mkdir -p packages/$pkg/dist
+              echo "$PPK_VALUE" | base64 -d > packages/$pkg/dist/private.ppk
+            fi
+
+            FILTERS="$FILTERS --filter $NAME..."
+          done
+
+          echo "Running: pnpm $FILTERS run build"
+          pnpm $FILTERS run build
+
+      - name: Install GitHub CLI
+        run: |
+          sudo apt update
+          sudo apt install -y gh
+
+      - name: Publish and release per updated package
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for pkg in ${{ needs.detect-version-change.outputs.changed_packages }}; do
+            pkg=$(echo "$pkg" | xargs)
+            echo "----"
+            echo "Processing package: $pkg"
+
+            CONFIG="packages/$pkg/.releaseconfig.json"
+            ARTIFACT=$(jq -r .artifact "$CONFIG")
+            PUBLISH=$(jq -r .publish "$CONFIG")
+            CHANGELOG="packages/$pkg/CHANGELOG.md"
+
+            NAME=$(node -p "require('./packages/$pkg/package.json').name")
+            VERSION=$(node -p "require('./packages/$pkg/package.json').version")
+            TAG="${NAME}@${VERSION}"
+            
+            SAFE_FILENAME=$(echo "$NAME" \
+              | tr '@/' '-' \
+              | tr -s '[:space:]' '-' \
+              | tr -cd '[:alnum:]-_' \
+              | sed 's/--*/-/g; s/^-//; s/-$//' \
+            )-${VERSION}.zip
+
+            echo "Settings for $NAME -> artifact: $ARTIFACT, publish: $PUBLISH"
+
+            if [ "$PUBLISH" == "true" ]; then
+              echo "Publishing $NAME..."
+              cd packages/$pkg
+              pnpm publish --access public --no-git-checks
+              cd ../../
+            fi
+
+            if [ "$ARTIFACT" == "true" ]; then
+              echo "Creating artifact for $NAME..."
+              mkdir -p artifacts/$pkg
+              if [ ! -d "packages/$pkg/dist" ]; then
+                echo "⚠️ dist/ directory not found for $pkg. Skipping artifact creation."
+                continue
+              fi
+              cp -r packages/$pkg/dist artifacts/$pkg/
+              cd artifacts/$pkg
+              zip -r ../../$SAFE_FILENAME dist
+              cd ../../
+
+              echo "Extracting release notes from CHANGELOG.md..."
+
+              START=$(grep -n "^## ${VERSION}$" "$CHANGELOG" | cut -d: -f1)
+              END=$(grep -n "^## " "$CHANGELOG" | awk -v s="$START" '$1 > s {print $1; exit}' FS=":")
+              
+              if [ -z "$START" ]; then
+                echo "⚠️ Version $VERSION not found in changelog"
+                RELEASE_NOTES="See changelog for v$VERSION"
+              else
+                if [ -z "$END" ]; then
+                  END=$(wc -l < "$CHANGELOG")
+                fi
+                RELEASE_NOTES=$(sed -n "$((START+1)),$((END-1))p" "$CHANGELOG")
+              fi
+
+              echo "Creating GitHub Release for $NAME..."
+              gh release create "$TAG" "$SAFE_FILENAME" \
+                --title "$TAG" \
+                --notes "$RELEASE_NOTES"
+            fi
+          done

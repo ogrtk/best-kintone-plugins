@@ -1,0 +1,22 @@
+{
+	"name": "Debian",
+	"dockerFile": "Dockerfile",
+	"runArgs": [
+		"--env-file",
+		".devcontainer/.env"
+	],
+	"postCreateCommand": "pnpm install",
+	"workspaceFolder": "${localWorkspaceFolder}",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"Gruntfuggly.todo-tree",
+				"MS-CEINTL.vscode-language-pack-ja",
+				"ChakrounAnas.turbo-console-log",
+				"styled-components.vscode-styled-components",
+				"biomejs.biome",
+				"steoates.autoimport"
+			]
+		}
+	}
+}
