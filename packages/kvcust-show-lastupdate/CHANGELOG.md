@@ -1,5 +1,11 @@
 # @ogrtk/kvcust-show-lastupdate
 
+## 1.0.4
+
+### Patch Changes
+
+- 4b144de: y
+
 ## 1.0.3
 
 ### Patch Changes
