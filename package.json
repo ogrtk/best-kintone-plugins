@@ -2,11 +2,13 @@
 	"name": "kintone-dev",
 	"private": true,
 	"version": "1.0.0",
+	"type": "module",
 	"packageManager": "pnpm@8.15.4",
 	"scripts": {
 		"release": "changeset",
 		"build": "pnpm -r run build",
-		"collect-ppks": "node scripts/generate-ppk-store.js"
+		"collect-ppks": "tsx scripts/collect-ppks.ts",
+		"restore-ppks": "tsx scripts/restore-ppks.ts"
 	},
 	"keywords": [],
 	"author": "",

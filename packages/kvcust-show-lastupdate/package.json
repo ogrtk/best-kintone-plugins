@@ -1,6 +1,6 @@
 {
 	"name": "@ogrtk/kvcust-show-lastupdate",
-	"version": "1.0.4",
+	"version": "0.8.0",
 	"type": "module",
 	"main": "kv-index.js",
 	"scripts": {
