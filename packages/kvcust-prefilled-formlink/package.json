@@ -4,8 +4,11 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
+		"cleanup": "node -e \"import('fs').then(fs => fs.rmSync('dist', { recursive: true, force: true }))\"",
+		"copy": "node -e \"import('fs').then(fs => fs.cpSync('src','dist',{recursive:true}))\"",
 		"check": "biome check --write",
-		"dev": "vite dev"
+		"dev": "vite dev",
+		"build": "pnpm cleanup && pnpm copy"
 	},
 	"keywords": [],
 	"author": "",
