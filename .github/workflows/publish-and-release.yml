@@ -134,7 +134,7 @@ jobs:
         run: |
           UPDATED="${{ needs.detect-version-change.outputs.changed_packages }}"
           FILTERS=""
-          echo "$PPK_STORE" > ppk_store.json
+          echo "$PPK_STORE" | base64 -d > ppk_store.json
 
           for pkg in $UPDATED; do
             pkg=$(echo "$pkg" | xargs)
