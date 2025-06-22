@@ -1,5 +1,4 @@
 {
   "artifact": true,
-  "publish": false,
-  "requirePpk": true
+  "publish": false
 }

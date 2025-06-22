@@ -136,27 +136,18 @@ jobs:
         run: |
           UPDATED="${{ needs.detect-version-change.outputs.changed_packages }}"
           FILTERS=""
-          echo "$PPK_STORE" | base64 -d > ppk_store.json
-          pnpm tsx ./scripts/restore-ppks.ts
 
+          # plugin用private.ppkをリポジトリのsecretから復元
+          if [ -n "$PPK_STORE" ]; then
+            echo "$PPK_STORE" | base64 -d > ppk_store.json
+            pnpm tsx ./scripts/restore-ppks.ts
+          else
+            echo "ℹ️ PPK_STORE is empty. Skipping restore process."
+          fi
           for pkg in $UPDATED; do
             pkg=$(echo "$pkg" | xargs)
             NAME=$(node -p "require('./packages/$pkg/package.json').name")
             CONFIG="packages/$pkg/.releaseconfig.json"
-            REQUIRE_PPK=$(jq -r .requirePpk "$CONFIG")
-
-            # if [ "$REQUIRE_PPK" == "true" ]; then
-            #   echo "Restoring ppk for $NAME..."
-            #   PPK_VALUE=$(jq -r --arg name "$NAME" '.[$name]' ppk_store.json)
-
-            #   if [ "$PPK_VALUE" == "null" ] || [ -z "$PPK_VALUE" ]; then
-            #     echo "❌ PPK not found for $NAME"
-            #     exit 1
-            #   fi
-
-            #   mkdir -p packages/$pkg/dist
-            #   echo "$PPK_VALUE" | base64 -d > packages/$pkg/dist/private.ppk
-            # fi
 
             FILTERS="$FILTERS --filter $NAME..."
           done
