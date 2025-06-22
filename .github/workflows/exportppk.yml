@@ -9,18 +9,16 @@ permissions:
 
 jobs:
   export-ppk-store:
-    env:
-      PPK_STORE: ${{ secrets.PPK_STORE }}
     runs-on: ubuntu-latest
     steps:
       - name: Set up repository
         uses: actions/checkout@v4
 
-      - name: Decode PPK_STORE secret and save to file
+      - name: Safer alternative using printf
+        env:
+          PPK_STORE_ENCODED: ${{ secrets.PPK_STORE }}
         run: |
-          # echo "${{ env.PPK_STORE }}" | base64 -d > ppk_store.json
-          echo '${{ env.PPK_STORE }}' > ppk_store.json
-
+          printf "%s" "$PPK_STORE_ENCODED" | base64 -d > ppk_store.json
       - name: Upload ppk_store.json as artifact
         uses: actions/upload-artifact@v4
         with:
