@@ -1,5 +1,5 @@
 {
-	"name": "kvcust-prefilled-formlink",
+	"name": "@ogrtk/kvcust-prefilled-formlink",
 	"version": "0.8.0",
 	"main": "index.js",
 	"type": "module",

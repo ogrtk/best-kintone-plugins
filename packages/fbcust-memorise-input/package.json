@@ -1,6 +1,6 @@
 {
-	"name": "fbcust-memorise-input",
-	"version": "1.0.0",
+	"name": "@ogrtk/fbcust-memorise-input",
+	"version": "0.8.0",
 	"main": "fb-index.js",
 	"type": "module",
 	"scripts": {

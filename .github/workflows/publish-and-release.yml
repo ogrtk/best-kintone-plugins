@@ -130,17 +130,6 @@ jobs:
           echo "${CERTIFICATE_CRT}" | base64 -d > certificate/localhost.crt
           echo "${CERTIFICATE_KEY}" | base64 -d > certificate/localhost.key
 
-      # - name: Build updated packages
-      #   run: |
-          # UPDATED="${{ needs.detect-version-change.outputs.changed_packages }}"
-      #     FILTERS=""
-      #     for pkg in $UPDATED; do
-      #       pkg=$(echo "$pkg" | xargs)  # 空白除去
-      #       NAME=$(node -p "require('./packages/$pkg/package.json').name")
-      #       FILTERS="$FILTERS --filter $NAME..."
-      #     done
-      #     echo "Running: pnpm $FILTERS run build"
-      #     pnpm $FILTERS run build
       - name: Build updated packages with PPK restore (PPK_STORE方式)
         run: |
           UPDATED="${{ needs.detect-version-change.outputs.changed_packages }}"
@@ -177,74 +166,6 @@ jobs:
           sudo apt update
           sudo apt install -y gh
 
-      # - name: Publish and release per updated package
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     NODE_AUTH_TOKEN: ${{ secrets.PAT_FOR_PACKAGES }}
-      #   run: |
-      #     for pkg in ${{ needs.detect-version-change.outputs.changed_packages }}; do
-      #       pkg=$(echo "$pkg" | xargs)
-      #       echo "----"
-      #       echo "Processing package: $pkg"
-
-      #       CONFIG="packages/$pkg/.releaseconfig.json"
-      #       ARTIFACT=$(jq -r .artifact "$CONFIG")
-      #       PUBLISH=$(jq -r .publish "$CONFIG")
-      #       CHANGELOG="packages/$pkg/CHANGELOG.md"
-
-      #       NAME=$(node -p "require('./packages/$pkg/package.json').name")
-      #       VERSION=$(node -p "require('./packages/$pkg/package.json').version")
-      #       TAG="${NAME}@${VERSION}"
-            
-      #       SAFE_FILENAME=$(echo "$NAME" \
-      #         | tr '@/' '-' \
-      #         | tr -s '[:space:]' '-' \
-      #         | tr -cd '[:alnum:]-_' \
-      #         | sed 's/--*/-/g; s/^-//; s/-$//' \
-      #       )-${VERSION}.zip
-
-      #       echo "Settings for $NAME -> artifact: $ARTIFACT, publish: $PUBLISH"
-
-      #       if [ "$PUBLISH" == "true" ]; then
-      #         echo "Publishing $NAME..."
-      #         cd packages/$pkg
-      #         pnpm publish --access public --no-git-checks
-      #         cd ../../
-      #       fi
-
-      #       if [ "$ARTIFACT" == "true" ]; then
-      #         echo "Creating artifact for $NAME..."
-      #         mkdir -p artifacts/$pkg
-      #         if [ ! -d "packages/$pkg/dist" ]; then
-      #           echo "⚠️ dist/ directory not found for $pkg. Skipping artifact creation."
-      #           continue
-      #         fi
-      #         cp -r packages/$pkg/dist artifacts/$pkg/
-      #         cd artifacts/$pkg
-      #         zip -r ../../$SAFE_FILENAME dist
-      #         cd ../../
-
-      #         echo "Extracting release notes from CHANGELOG.md..."
-
-      #         START=$(grep -n "^## ${VERSION}$" "$CHANGELOG" | cut -d: -f1)
-      #         END=$(grep -n "^## " "$CHANGELOG" | awk -v s="$START" '$1 > s {print $1; exit}' FS=":")
-              
-      #         if [ -z "$START" ]; then
-      #           echo "⚠️ Version $VERSION not found in changelog"
-      #           RELEASE_NOTES="See changelog for v$VERSION"
-      #         else
-      #           if [ -z "$END" ]; then
-      #             END=$(wc -l < "$CHANGELOG")
-      #           fi
-      #           RELEASE_NOTES=$(sed -n "$((START+1)),$((END-1))p" "$CHANGELOG")
-      #         fi
-
-      #         echo "Creating GitHub Release for $NAME..."
-      #         gh release create "$TAG" "$SAFE_FILENAME" \
-      #           --title "$TAG" \
-      #           --notes "$RELEASE_NOTES"
-      #       fi
-      #     done
       - name: Publish and release per updated package
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

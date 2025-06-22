@@ -1,6 +1,6 @@
 {
-	"name": "fbcust-random-cd",
-	"version": "1.0.0",
+	"name": "@ogrtk/fbcust-random-cd",
+	"version": "0.8.0",
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
