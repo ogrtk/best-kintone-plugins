@@ -18,7 +18,7 @@ jobs:
         env:
           PPK_STORE_ENCODED: ${{ secrets.PPK_STORE }}
         run: |
-          printf "%s" "$PPK_STORE_ENCODED" | base64 -d > ppk_store.json
+          echo "$PPK_STORE_ENCODED" | base64 -d > ppk_store.json
       - name: Upload ppk_store.json as artifact
         uses: actions/upload-artifact@v4
         with:
