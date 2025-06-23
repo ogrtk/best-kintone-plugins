@@ -90,7 +90,12 @@ export function KintoneLikeTable<
             {fieldMetas.map((fieldMeta) => (
               <Fragment key={fieldMeta.key}>
                 <th key={fieldMeta.key} className="kintoneplugin-table-th">
-                  <span className="title">{fieldMeta.label}</span>
+                  <span className="title">
+                    {fieldMeta.label}
+                    {fieldMeta.required && (
+                      <span className="kintoneplugin-require"> * </span>
+                    )}
+                  </span>
                 </th>
               </Fragment>
             ))}
@@ -100,51 +105,44 @@ export function KintoneLikeTable<
         <tbody>
           {fields.map((fieldObj, index) => (
             <tr key={fieldObj.id}>
-              {Object.keys(fieldObj)
-                .filter((key) => key !== "id")
-                .map((key) => {
-                  const fieldMeta = fieldMetas.find((meta) => meta.key === key);
-                  if (!fieldMeta)
-                    throw new Error(
-                      `項目のメタデータが設定されていません:${key}`,
+              {fieldMetas.map((fieldMeta) => {
+                const key = fieldMeta.key;
+                switch (fieldMeta.type) {
+                  case "singletext":
+                    return (
+                      <td key={`${key}-${fieldObj.id}`}>
+                        <div className="kintoneplugin-table-td-control">
+                          <div className="kintoneplugin-table-td-control-value">
+                            <KintoneLikeSingleTextWithoutLabel
+                              name={`${name}.${index}.${key}` as Path<T>}
+                              register={register}
+                              errors={errors}
+                              style={fieldMeta.style}
+                            />
+                          </div>
+                        </div>
+                      </td>
                     );
-                  switch (fieldMeta.type) {
-                    case "singletext":
-                      return (
-                        <td key={`${key}-${fieldObj.id}`}>
-                          <div className="kintoneplugin-table-td-control">
-                            <div className="kintoneplugin-table-td-control-value">
-                              <KintoneLikeSingleTextWithoutLabel
-                                name={`${name}.${index}.${key}` as Path<T>}
-                                register={register}
-                                errors={errors}
-                                style={fieldMeta.style}
-                              />
-                            </div>
+                  case "select":
+                    return (
+                      <td key={`${key}-${fieldObj.id}`}>
+                        <div className="kintoneplugin-table-td-control">
+                          <div className="kintoneplugin-table-td-control-value">
+                            <KintoneLikeSelectWithoutLabel
+                              name={`${name}.${index}.${key}` as Path<T>}
+                              options={fieldMeta.options}
+                              register={register}
+                              errors={errors}
+                              style={fieldMeta.style}
+                            />
                           </div>
-                        </td>
-                      );
-                    case "select":
-                      return (
-                        <td key={`${key}-${fieldObj.id}`}>
-                          <div className="kintoneplugin-table-td-control">
-                            <div className="kintoneplugin-table-td-control-value">
-                              <KintoneLikeSelectWithoutLabel
-                                name={`${name}.${index}.${key}` as Path<T>}
-                                options={fieldMeta.options}
-                                register={register}
-                                errors={errors}
-                                style={fieldMeta.style}
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      );
-                    default:
-                      //TODO: 他種類のコンポーネント追加
-                      return <div key={key} />;
-                  }
-                })}
+                        </div>
+                      </td>
+                    );
+                  default:
+                    return <td key={`${key}-${fieldObj.id}`}>未対応</td>;
+                }
+              })}
               <td className="kintoneplugin-table-td-operation">
                 <button
                   className="kintoneplugin-button-remove-row-image"
