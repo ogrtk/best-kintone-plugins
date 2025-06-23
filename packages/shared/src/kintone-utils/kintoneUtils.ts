@@ -7,10 +7,23 @@ import type { SafeParseReturnType, ZodSchema, z } from "zod";
 /**
  * kintoneアプリのレコードを表す型
  */
+// export type KintoneRecord = {
+//   [fieldCode: string]: {
+//     value: unknown;
+//   };
+// };
+
+export type KintoneFieldValue = {
+  type: string;
+  value: unknown;
+};
+
 export type KintoneRecord = {
-  [fieldCode: string]: {
-    value: unknown;
-  };
+  [fieldCode: string]: KintoneFieldValue;
+};
+
+export type KintoneEvent = {
+  record: KintoneRecord;
 };
 
 /**
@@ -197,5 +210,6 @@ export function restorePluginConfig<T extends ZodSchema>(
   schema: T,
 ): SafeParseReturnType<z.infer<T>, z.infer<T>> {
   const config = kintone.plugin.app.getConfig(id);
-  return schema.safeParse(JSON.parse(config.data));
+  const parsingData = config.data ?? "{}";
+  return schema.safeParse(JSON.parse(parsingData));
 }

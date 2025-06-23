@@ -1,0 +1,36 @@
+{
+  "manifest_version": 1,
+  "version": "0.8.0",
+  "type": "APP",
+  "name": {
+    "ja": "リンク作成プラグイン",
+    "en": "construct hyperlink plugin"
+  },
+  "description": {
+    "ja": "レコード内のデータと組み合わせて、ハイパーリンクを設置",
+    "en": "construct hyperlink plugin"
+  },
+  "icon": "image/icon.png",
+  "homepage_url": {
+    "ja": "https://github.com/ogrtk/best-kintone-plugins"
+  },
+  "desktop": {
+    "js": [
+      "js/desktop.js"
+    ],
+    "css": [
+      "css/51-modern-default.css",
+      "css/config.css"
+    ]
+  },
+  "config": {
+    "html": "html/config.html",
+    "js": [
+      "js/config.js"
+    ],
+    "css": [
+      "css/51-modern-default.css",
+      "css/config.css"
+    ]
+  }
+}
