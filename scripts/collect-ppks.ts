@@ -14,7 +14,7 @@ const packageDirs = fs
 for (const dir of packageDirs) {
   const pkgPath = path.join(packagesDir, dir);
   const pkgJsonPath = path.join(pkgPath, "package.json");
-  const ppkPath = path.join(pkgPath, "dist", "private.ppk");
+  const ppkPath = path.join(pkgPath, "scripts", "private.ppk");
 
   if (!fs.existsSync(pkgJsonPath) || !fs.existsSync(ppkPath)) continue;
 

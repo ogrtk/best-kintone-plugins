@@ -30,8 +30,6 @@ export function App({ PLUGIN_ID }: { PLUGIN_ID: string }) {
           (error) => ` 項目：${error.path} エラー：${error.message}`,
         );
 
-    // スペース項目取得
-    const initSpaceFields = await kintoneFieldsRetriever.getRecordSpaceFields();
     // 1行テキスト取得
     const initSingleTextFields =
       await kintoneFieldsRetriever.getSingleTextFields();
@@ -40,23 +38,19 @@ export function App({ PLUGIN_ID }: { PLUGIN_ID: string }) {
       initConfig,
       initMessages,
       initSingleTextFields,
-      initSpaceFields,
     };
   };
 
   /** suspense query */
-  const { initConfig, initMessages, initSingleTextFields, initSpaceFields } =
-    useSuspenseQuery({
-      queryKey: ["fetchData"],
-      queryFn: fetchData,
-      retry: false,
-    }).data;
+  const { initConfig, initMessages, initSingleTextFields } = useSuspenseQuery({
+    queryKey: ["fetchData"],
+    queryFn: fetchData,
+    retry: false,
+  }).data;
 
   // 選択肢の項目用state
   const [singleTextFields, _setSingleTextFields] =
     useState<SelectOption[]>(initSingleTextFields);
-  const [spaceFields, _setSpaceFields] =
-    useState<SelectOption[]>(initSpaceFields);
   const [messages, _setMessages] = useState<string[]>(initMessages);
 
   // react-hook-form
@@ -90,22 +84,21 @@ export function App({ PLUGIN_ID }: { PLUGIN_ID: string }) {
           rhfMethods={methods}
           label="リンクの設定"
           description="リンクを配置するスペースと項目等の情報を設定してください。"
-          name="configs"
+          name="linkConfigs"
           defaultValue={{
-            space: "",
-            fieldCode: "",
+            linkFieldCode: "",
+            urlPartsFieldCode: "",
             urlPrefix: "",
             urlPostfix: "",
-            linkText: "",
             style: "",
           }}
           required
           fieldMetas={[
             {
               type: "select",
-              key: "space",
-              label: "配置スペース",
-              options: spaceFields,
+              key: "linkFieldCode",
+              label: "リンク配置用フィールド",
+              options: singleTextFields,
               required: true,
             },
             {
@@ -116,8 +109,8 @@ export function App({ PLUGIN_ID }: { PLUGIN_ID: string }) {
             },
             {
               type: "select",
-              key: "fieldCode",
-              label: "フィールドコード",
+              key: "urlPartsFieldCode",
+              label: "URL構成用フィールド",
               options: singleTextFields,
               required: true,
             },
@@ -125,12 +118,6 @@ export function App({ PLUGIN_ID }: { PLUGIN_ID: string }) {
               type: "singletext",
               key: "urlPostfix",
               label: "URLの後方部分",
-            },
-            {
-              type: "singletext",
-              key: "linkText",
-              label: "リンクテキスト",
-              required: true,
             },
             {
               type: "singletext",

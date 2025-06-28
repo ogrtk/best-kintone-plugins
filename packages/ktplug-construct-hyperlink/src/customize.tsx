@@ -1,7 +1,4 @@
-import {
-  type KintoneEvent,
-  restorePluginConfig,
-} from "@ogrtk/shared/kintone-utils";
+import { restorePluginConfig } from "@ogrtk/shared/kintone-utils";
 import { pluginConfigSchema } from "./types";
 
 ((PLUGIN_ID) => {
@@ -12,52 +9,173 @@ import { pluginConfigSchema } from "./types";
     alert(msg);
     throw new Error(msg);
   }
-  const configs = result.data?.configs;
-
-  // 処理対象のイベントを用意
-  // 画面表示（登録・更新・照会）、データ変更時（登録・更新）
-  const targetEvents = configs
-    .map((config) => `app.record.create.change.${config.fieldCode}`)
-    .concat(
-      configs.map((config) => `app.record.edit.change.${config.fieldCode}`),
-    )
-    .concat([
-      "app.record.edit.show",
-      "app.record.create.show",
-      "app.record.detail.show",
-    ]);
+  const linkConfigs = result.data?.linkConfigs;
 
   /**
-   * イベント処理
+   * 登録・更新画面　表示時
    */
-  kintone.events.on(targetEvents, (event: KintoneEvent) => {
-    for (const config of configs) {
-      // 指定フィールドの値を取得
-      if (!event.record[config.fieldCode]) {
-        const msg = `指定の項目がありません:${config.fieldCode}`;
-        alert(msg);
-        throw new Error(msg);
-      }
-      const fieldData = event.record[config.fieldCode].value;
-      // 指定のスペースを取得
-      const el = kintone.app.record.getSpaceElement(config.space);
-      if (!el) {
-        const msg = `リンク設置用のスペースが取得できません:${config.space}`;
-        alert(msg);
-        throw new Error(msg);
-      }
+  kintone.events.on(
+    ["app.record.edit.show", "app.record.create.show"],
+    (event) => {
+      console.log(event);
 
-      // リンクを作成
-      el.innerHTML = "";
-      const anchorEl = document.createElement("a");
-      el.appendChild(anchorEl);
-      anchorEl.href = encodeURI(
-        config.urlPrefix + fieldData + config.urlPostfix,
+      for (const linkConfig of linkConfigs) {
+        // リンク用フィールドを非表示に
+        const linkField = event.record[linkConfig.linkFieldCode];
+        if (!linkField) {
+          const msg = `指定の項目がありません:${linkConfig.linkFieldCode}`;
+          alert(msg);
+          throw new Error(msg);
+        }
+
+        linkField.disabled = true; // 編集不可
+        kintone.app.record.setFieldShown(linkConfig.linkFieldCode, false); // 非表示
+      }
+      return event;
+    },
+  );
+
+  /**
+   * 登録・更新・一覧画面　保存時
+   */
+  kintone.events.on(
+    [
+      "app.record.create.submit",
+      "app.record.edit.submit",
+      "app.record.index.edit.submit",
+    ],
+    (event) => {
+      console.log(event);
+
+      for (const linkConfig of linkConfigs) {
+        // リンクするURLを構成
+        if (!event.record[linkConfig.urlPartsFieldCode]) {
+          const msg = `指定の項目がありません:${linkConfig.urlPartsFieldCode}`;
+          alert(msg);
+          throw new Error(msg);
+        }
+        const fieldData = event.record[linkConfig.urlPartsFieldCode].value;
+
+        const linkUrl = fieldData
+          ? encodeURI(linkConfig.urlPrefix + fieldData + linkConfig.urlPostfix)
+          : "";
+
+        // 指定フィールドにリンクを設定
+        const linkField = event.record[linkConfig.linkFieldCode];
+        if (!linkField) {
+          const msg = `指定の項目がありません:${linkConfig.linkFieldCode}`;
+          alert(msg);
+          throw new Error(msg);
+        }
+        linkField.value = linkUrl; // 項目の値として設定
+      }
+      return event;
+    },
+  );
+
+  /**
+   * 詳細画面　表示時
+   */
+  kintone.events.on(["app.record.detail.show"], (event) => {
+    console.log(event);
+
+    for (const linkConfig of linkConfigs) {
+      // 指定フィールドにリンクを設定
+      const linkField = event.record[linkConfig.linkFieldCode];
+      const linkEl = kintone.app.record.getFieldElement(
+        linkConfig.linkFieldCode,
       );
-      anchorEl.innerText = config.linkText;
-      if (config.style) anchorEl.style.cssText = config.style;
-      anchorEl.target = "_blank";
+      if (!linkField || !linkEl) {
+        const msg = `指定の項目がありません:${linkConfig.linkFieldCode}`;
+        alert(msg);
+        throw new Error(msg);
+      }
+      setLinkElement(linkEl, linkConfig.style, linkField.value);
     }
     return event;
   });
+
+  /**
+   * 一覧画面　表示時
+   */
+  kintone.events.on(["app.record.index.show"], (event) => {
+    console.log(event);
+
+    // 一覧表示以外は処理しない
+    if (event.viewType !== "list") return;
+
+    for (const linkConfig of linkConfigs) {
+      // 指定項目の要素の配列を取得
+      const linkEls = kintone.app.getFieldElements(linkConfig.linkFieldCode);
+      if (!linkEls || linkEls.length === 0) {
+        const msg = `指定の項目がありません:${linkConfig.linkFieldCode}`;
+        console.warn(msg);
+        continue;
+      }
+      // 行ごとにデータを確認し、対応する要素にリンクを設定
+      for (const [idx, record] of event.records.entries()) {
+        const linkField = record[linkConfig.linkFieldCode];
+        if (linkField.value) {
+          const linkEl = linkEls[idx];
+          setLinkElement(linkEl, linkConfig.style, linkField.value);
+        }
+      }
+    }
+    return event;
+  });
+
+  /**
+   * 一覧画面　編集開始時
+   */
+  kintone.events.on(["app.record.index.edit.show"], (event) => {
+    console.log(event);
+
+    // リンク設定用要素を編集不可に設定
+    for (const linkConfig of linkConfigs) {
+      // for (const record of event.records) {
+      const linkField = event.record[linkConfig.linkFieldCode];
+      if (linkField) {
+        linkField.disabled = true; // 編集不可
+      }
+      // }
+    }
+    return event;
+  });
+
+  /**
+   * １行テキスト項目内で、実際に文字を配置している要素を取得
+   * （ここにスタイルを設定する）
+   */
+  function findStylingElement(baseEl: HTMLElement) {
+    const span = baseEl.querySelector("span");
+    if (!span) return null;
+
+    const anchor = span.querySelector("a");
+    return anchor ?? span;
+  }
+
+  /**
+   * 要素をリンクとして設定
+   */
+  function setLinkElement(
+    linkEl: HTMLElement,
+    styleCssText: string,
+    linkParamValue: string,
+  ) {
+    if (linkParamValue) {
+      // スタイル設定
+      if (styleCssText) {
+        const stylingEl = findStylingElement(linkEl);
+        if (stylingEl) stylingEl.style.cssText = styleCssText;
+      }
+      // リンクを設定
+      linkEl.addEventListener("click", () => {
+        window.open(linkParamValue, "_blank");
+      });
+      // マウスオーバー時のアイコン設定
+      linkEl.addEventListener("mouseover", () => {
+        linkEl.style.cursor = "pointer";
+      });
+    }
+  }
 })(kintone.$PLUGIN_ID);

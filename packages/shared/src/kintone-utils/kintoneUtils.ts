@@ -7,22 +7,20 @@ import type { SafeParseReturnType, ZodSchema, z } from "zod";
 /**
  * kintoneアプリのレコードを表す型
  */
-// export type KintoneRecord = {
-//   [fieldCode: string]: {
-//     value: unknown;
-//   };
-// };
-
 export type KintoneFieldValue = {
   type: string;
   value: unknown;
+  error?: string;
+  disabled?: boolean;
+  isShown?: boolean;
 };
 
 export type KintoneRecord = {
   [fieldCode: string]: KintoneFieldValue;
 };
 
-export type KintoneEvent = {
+export type KintoneRecordEvent = {
+  type: string;
   record: KintoneRecord;
 };
 
