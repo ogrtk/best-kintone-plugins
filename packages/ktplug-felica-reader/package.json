@@ -1,5 +1,5 @@
 {
-  "name": "@ogrtk/ktplug-read-felica",
+  "name": "@ogrtk/ktplug-felica-reader",
   "version": "0.8.2",
   "main": "index.js",
   "type": "module",
