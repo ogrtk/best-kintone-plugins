@@ -4,13 +4,20 @@
 
 ## プラグイン・カスタマイズ一覧
 
-以下のプロジェクトは、kintone や FormBridge のカスタマイズを目的としています。
+以下の命名規則に従って、packageを構成しています。
+- `ktplug`から始まるプロジェクト名・・・kintoneのプラグイン
+- `ktcust`から始まるプロジェクト名・・・kintoneのカスタマイズ
+- `fbcust`から始まるプロジェクト名・・・FormBridgeのカスタマイズ
+- `kvcust`から始まるプロジェクト名・・・kViewerのカスタマイズ
 
-| プロジェクト名                                                                   | 種別          | 説明                       |
+本リポジトリに含まれるプロジェクト一覧
+
+| プロジェクト名                                                                   | 種別          | 説明                       |artifact
 | ------------------------------------------------------------------------- | ----------- | ------------------------ |
-| [**ktplug-rcs300-felica-reader**](https://github.com/ogrtk/kintone-dev/releases/tag/fbcust-random-cd%401.0.0) | kintoneアプリ  | RCS300 FeliCa リーダー用プラグイン |
-| [**ktplug-qrcode-reader**](https://github.com/ogrtk/kintone-dev/releases/tag/ktplug-qrcode-reader%400.8.0)               | kintoneアプリ  | QRコードリーダー用プラグイン          |
-| [**fbcust-random-cd**](https://github.com/ogrtk/kintone-dev/releases/tag/fbcust-random-cd%400.8.0)                       | FormBridge用 | ランダムコード生成のカスタマイズ         |
+| [**ktplug-read-felica**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-read-felica) | kintoneプラグイン  | FeliCa リーダー |
+| [**ktplug-qrcode-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-qrcode-reader)               | kintoneアプリ  | QRコードリーダー          |
+| [**fbcust-memorise-input**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-memorise-input)                       | FormBridge用 | 入力値をブラウザに保持         |
+| [**fbcust-random-cd**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-random-cd)                       | FormBridge用 | ランダムコード値の生成         |
 
 各プロジェクトの詳細については、それぞれの `README.md` を参照してください。
 
@@ -29,13 +36,8 @@
 
 #### セットアップ手順
 
-```sh
-# pnpm をインストールしていない場合、以下を実行
-npm install -g pnpm
+VSCode、devcontainerを導入し、本リポジトリをクローン後、開発用コンテナで起動してください
 
-# 依存関係をインストール
-pnpm install
-```
 
 ### 共通コンポーネント
 
