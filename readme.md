@@ -13,7 +13,7 @@
 本リポジトリに含まれるプロジェクト一覧
 
 | プロジェクト名                                                                   | 種別          | 説明                       |artifact|
-| ------------------------------------------------------------------------- | ----------- | ------------------------ |
+| ------------------------------------------------------------------------- | ----------- | ------------------------ |----|
 | [**ktplug-read-felica**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-read-felica) | kintoneプラグイン  | FeliCa リーダー |
 | [**ktplug-qrcode-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-qrcode-reader)               | kintoneアプリ  | QRコードリーダー          |
 | [**fbcust-memorise-input**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-memorise-input)                       | FormBridge用 | 入力値をブラウザに保持         |
