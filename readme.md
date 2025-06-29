@@ -4,7 +4,7 @@
 
 ## プラグイン・カスタマイズ一覧
 
-以下の命名規則に従って、packageを構成しています。
+以下の命名規則に従って、各プロジェクトを構成しています。
 - `ktplug`から始まるプロジェクト名・・・kintoneのプラグイン
 - `ktcust`から始まるプロジェクト名・・・kintoneのカスタマイズ
 - `fbcust`から始まるプロジェクト名・・・FormBridgeのカスタマイズ
@@ -14,10 +14,11 @@
 
 | プロジェクト名                                                                   | 種別          | 説明                       |artifact|
 | ------------------------------------------------------------------------- | ----------- | ------------------------ |----|
-| [**ktplug-read-felica**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-read-felica) | kintoneプラグイン  | FeliCa リーダー |
-| [**ktplug-qrcode-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-qrcode-reader)               | kintoneアプリ  | QRコードリーダー          |
 | [**fbcust-memorise-input**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-memorise-input)                       | FormBridge用 | 入力値をブラウザに保持         |
 | [**fbcust-random-cd**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-random-cd)                       | FormBridge用 | ランダムコード値の生成         |
+| [**ktplug-construct-hyperlink**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-construct-hyperlink) | kintoneプラグイン  | リンク自動生成 | [1.0.0](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Fktplug-construct-hyperlink%401.0.0)
+| [**ktplug-read-felica**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-read-felica) | kintoneプラグイン  | FeliCa リーダー |
+| [**ktplug-qrcode-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-qrcode-reader)               | kintoneアプリ  | QRコードリーダー          |
 
 各プロジェクトの詳細については、それぞれの `README.md` を参照してください。
 
