@@ -8,3 +8,4 @@ dist/
 memo/
 .devcontainer/.env
 ppk_store.json
+secrets/
