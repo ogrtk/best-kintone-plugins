@@ -9,9 +9,8 @@
     "check": "biome check --write",
     "build:dev": "pnpm run check && vite build",
     "dev": "concurrently 'pnpm run build:dev --watch' 'vite dev'",
-    "prebuild": "export $(cat ../../.secrets | xargs)",
-    "build": "pnpm run check && vite build && cp ./public/customize.js ./plugin/js/desktop.js && vite build --config vite.plugin.config.js && cp ./public/config.js ./plugin/js/config.js && kintone-simple-plugin-packer --i plugin --o dist/plugin.zip --ppk dist/private.ppk",
-    "deploy": "export $(cat ../../.secrets | xargs) && kintone-api-plugin-uploader -f dist/plugin.zip -i dist/pluginId.txt",
+    "build": "pnpm run check && vite build && cp ./public/customize.js ./plugin/js/desktop.js && vite build --config vite.plugin.config.js && cp ./public/config.js ./plugin/js/config.js && kintone-simple-plugin-packer --i plugin --o dist/plugin.zip --ppk secrets/private.ppk",
+    "deploy": "export $(cat ../../secrets/.kintone.credentials | xargs) && kintone-api-plugin-uploader -f dist/plugin.zip -i dist/pluginId.txt",
     "band": "pnpm run build && pnpm run deploy"
   },
   "keywords": [],

@@ -5,7 +5,7 @@ certificate/
 public/
 dist/
 .secrets
+secrets/
 memo/
 .devcontainer/.env
 ppk_store.json
-secrets/

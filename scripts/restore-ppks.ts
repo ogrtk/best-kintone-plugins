@@ -32,10 +32,10 @@ for (const [pkgName, ppkBase64] of Object.entries(store)) {
     continue;
   }
 
-  const distDir = path.join(packagesDir, matchDir, "dist");
-  const ppkPath = path.join(distDir, "private.ppk");
+  const secretsDir = path.join(packagesDir, matchDir, "secrets");
+  const ppkPath = path.join(secretsDir, "private.ppk");
 
-  fs.mkdirSync(distDir, { recursive: true });
+  fs.mkdirSync(secretsDir, { recursive: true });
   fs.writeFileSync(ppkPath, Buffer.from(ppkBase64, "base64"));
   console.log(`✅ Restored private.ppk for ${pkgName}`);
 }

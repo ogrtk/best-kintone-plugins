@@ -1,23 +1,27 @@
 import { z } from "@ogrtk/shared/zod-utils";
 
 /**
- * プラグインの設定情報スキーマ
+ * リンク設定のスキーマ
  */
-export const pluginConfigSchema = z.object({
-  configs: z
-    .array(
-      z.object({
-        space: z.string().nonempty(),
-        urlPrefix: z.string().nonempty(),
-        fieldCode: z.string().nonempty(),
-        urlPostfix: z.string(),
-        linkText: z.string().nonempty(),
-        style: z.string(),
-      }),
-    )
-    .nonempty(),
+const linkConfigSchema = z.object({
+  linkFieldCode: z.string().nonempty(),
+  urlPrefix: z.string().nonempty(),
+  urlPartsFieldCode: z.string().nonempty(),
+  urlPostfix: z.string(),
+  style: z.string(),
 });
 /**
- * プラグインの設定情報
+ * リンク設定
+ */
+export type LinkConfig = z.infer<typeof linkConfigSchema>;
+
+/**
+ * プラグイン設定全体のスキーマ
+ */
+export const pluginConfigSchema = z.object({
+  linkConfigs: z.array(linkConfigSchema).nonempty(),
+});
+/**
+ * プラグイン設定全体
  */
 export type PluginConfig = z.infer<typeof pluginConfigSchema>;
