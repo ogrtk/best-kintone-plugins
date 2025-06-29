@@ -12,13 +12,15 @@
 
 本リポジトリに含まれるプロジェクト一覧
 
-| プロジェクト名                                                                   | 種別          | 説明                       |artifact|
+| project                                                                   | 対象          | 説明                       |artifact|
 | ------------------------------------------------------------------------- | ----------- | ------------------------ |----|
 | [**fbcust-memorise-input**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-memorise-input)                       | FormBridge用 | 入力値をブラウザに保持         |
-| [**fbcust-random-cd**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-random-cd)                       | FormBridge用 | ランダムコード値の生成         |
-| [**ktplug-construct-hyperlink**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-construct-hyperlink) | kintoneプラグイン  | リンク自動生成 | [1.0.0](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Fktplug-construct-hyperlink%401.0.0)
-| [**ktplug-read-felica**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-read-felica) | kintoneプラグイン  | FeliCa リーダー |
-| [**ktplug-qrcode-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-qrcode-reader)               | kintoneアプリ  | QRコードリーダー          |
+| [**fbcust-random-cd**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-random-cd)                       | FormBridge | ランダムコード値の生成         |
+| [**ktplug-construct-hyperlink**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-construct-hyperlink) | kintone  | リンク自動生成 | [1.0.0](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Fktplug-construct-hyperlink%401.0.0)
+| [**ktplug-felica-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug--felica-reader) | kintone  | FeliCa 読取 |
+| [**ktplug-qrcode-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-qrcode-reader)               | kintone  | QRコード読取          |
+| [**kvcust-prefilled-formlink**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/kvcust-prefilled-formlink)               | kViewer/FormBridge  | 値設定済フォームへのリンク生成          |
+| [**kvcust-show-lastupdate**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/kvcust-show-lastupdate)               | kViewer  | 最終更新日の表示          |
 
 各プロジェクトの詳細については、それぞれの `README.md` を参照してください。
 
