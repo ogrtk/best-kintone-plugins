@@ -1,6 +1,6 @@
 {
   "name": "@ogrtk/ktplug-construct-hyperlink",
-  "version": "0.8.0",
+  "version": "1.0.0",
   "main": "index.js",
   "type": "module",
   "scripts": {
