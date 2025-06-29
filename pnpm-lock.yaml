@@ -113,6 +113,58 @@ importers:
         specifier: ^19.0.2
         version: 19.1.6(@types/react@19.1.8)
 
+  packages/ktplug-felica-reader:
+    dependencies:
+      '@hookform/resolvers':
+        specifier: ^3.9.1
+        version: 3.10.0(react-hook-form@7.52.0)
+      '@kintone/rest-api-client':
+        specifier: ^5.6.0
+        version: 5.7.4
+      '@ogrtk/shared':
+        specifier: workspace:^
+        version: link:../shared
+      '@ogrtk/simple-felica-reader':
+        specifier: ^0.8.10
+        version: 0.8.10
+      '@tanstack/react-query':
+        specifier: ^5.68.0
+        version: 5.80.7(react@19.1.0)
+      react:
+        specifier: ^19.0.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.1.0(react@19.1.0)
+      react-error-boundary:
+        specifier: ^5.0.0
+        version: 5.0.0(react@19.1.0)
+      react-hook-form:
+        specifier: 7.52.0
+        version: 7.52.0(react@19.1.0)
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.64
+    devDependencies:
+      '@kintone/dts-gen':
+        specifier: ^8.1.1
+        version: 8.1.2(typescript@5.8.3)
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.15.31
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.1.8
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.1.6(@types/react@19.1.8)
+      '@types/w3c-web-usb':
+        specifier: ^1.0.10
+        version: 1.0.10
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.5.0
+
   packages/ktplug-qrcode-reader:
     dependencies:
       '@hookform/resolvers':
@@ -164,58 +216,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.2
         version: 19.1.6(@types/react@19.1.8)
-      dotenv:
-        specifier: ^16.4.7
-        version: 16.5.0
-
-  packages/ktplug-read-felica:
-    dependencies:
-      '@hookform/resolvers':
-        specifier: ^3.9.1
-        version: 3.10.0(react-hook-form@7.52.0)
-      '@kintone/rest-api-client':
-        specifier: ^5.6.0
-        version: 5.7.4
-      '@ogrtk/shared':
-        specifier: workspace:^
-        version: link:../shared
-      '@ogrtk/simple-felica-reader':
-        specifier: ^0.8.10
-        version: 0.8.10
-      '@tanstack/react-query':
-        specifier: ^5.68.0
-        version: 5.80.7(react@19.1.0)
-      react:
-        specifier: ^19.0.0
-        version: 19.1.0
-      react-dom:
-        specifier: ^19.0.0
-        version: 19.1.0(react@19.1.0)
-      react-error-boundary:
-        specifier: ^5.0.0
-        version: 5.0.0(react@19.1.0)
-      react-hook-form:
-        specifier: 7.52.0
-        version: 7.52.0(react@19.1.0)
-      zod:
-        specifier: ^3.24.1
-        version: 3.25.64
-    devDependencies:
-      '@kintone/dts-gen':
-        specifier: ^8.1.1
-        version: 8.1.2(typescript@5.8.3)
-      '@types/node':
-        specifier: ^22.10.2
-        version: 22.15.31
-      '@types/react':
-        specifier: ^19.0.2
-        version: 19.1.8
-      '@types/react-dom':
-        specifier: ^19.0.2
-        version: 19.1.6(@types/react@19.1.8)
-      '@types/w3c-web-usb':
-        specifier: ^1.0.10
-        version: 1.0.10
       dotenv:
         specifier: ^16.4.7
         version: 16.5.0
