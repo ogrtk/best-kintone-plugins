@@ -16,7 +16,7 @@
   },
   "desktop": {
     "js": [
-      "js/desktop.js"
+      "js/customize/desktop.js"
     ],
     "css": [
       "css/51-modern-default.css",
@@ -26,7 +26,7 @@
   "config": {
     "html": "html/config.html",
     "js": [
-      "js/config.js"
+      "js/config/config.js"
     ],
     "css": [
       "css/51-modern-default.css",

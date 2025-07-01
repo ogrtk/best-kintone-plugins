@@ -1,5 +1,5 @@
 import { restorePluginConfig } from "@ogrtk/shared/kintone-utils";
-import { pluginConfigSchema } from "./types";
+import { pluginConfigSchema } from "../types";
 
 ((PLUGIN_ID) => {
   // pluginに保存した設定情報を取得
