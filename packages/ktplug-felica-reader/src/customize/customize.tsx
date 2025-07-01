@@ -1,11 +1,7 @@
 import { restorePluginConfig } from "@ogrtk/shared/kintone-utils";
 import { createRoot } from "react-dom/client";
-import {
-  AppIndex,
-  AppRecord,
-  type IndexMode,
-} from "./components/customize/App";
-import { pluginConfigSchema } from "./types";
+import { pluginConfigSchema } from "../types";
+import { AppIndex, AppRecord, type IndexMode } from "./components/App";
 
 ((PLUGIN_ID) => {
   // 追加・編集画面表示後イベント

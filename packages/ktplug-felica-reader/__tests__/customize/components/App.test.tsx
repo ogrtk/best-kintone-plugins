@@ -1,5 +1,5 @@
 // __tests__/App.test.tsx
-import { AppIndex, AppRecord } from "@/src/components/customize/App"; // ※ファイルパスは調整してください
+import { AppIndex, AppRecord } from "@/src/customize/components/App"; // ※ファイルパスは調整してください
 import type { PluginConfig } from "@/src/types";
 import type { KintoneRecordField } from "@kintone/rest-api-client";
 import { restorePluginConfig } from "@ogrtk/shared/kintone-utils";
@@ -864,10 +864,10 @@ describe("AppIndex 登録", () => {
     expect(mockAddRecordFn).toHaveBeenCalledWith({
       app: 123,
       record: {
-        FIELD1: { value: "DUMMY_IDM" },
-        FIELD2: { value: "DUMMY_IDM" },
-        FIELD3: { value: "IN" },
-        FIELD4: { value: "IN" },
+        FIELD1: { type: "SINGLE_LINE_TEXT", value: "DUMMY_IDM" },
+        FIELD2: { type: "SINGLE_LINE_TEXT", value: "DUMMY_IDM" },
+        FIELD3: { type: "SINGLE_LINE_TEXT", value: "IN" },
+        FIELD4: { type: "SINGLE_LINE_TEXT", value: "IN" },
         additionalField: { value: "additionalValue" },
       },
     });
@@ -921,8 +921,8 @@ describe("AppIndex 登録", () => {
     expect(mockAddRecordFn).toHaveBeenCalledWith({
       app: 123,
       record: {
-        FIELD1: { value: "DUMMY_IDM" },
-        FIELD2: { value: "DUMMY_IDM" },
+        FIELD1: { type: "SINGLE_LINE_TEXT", value: "DUMMY_IDM" },
+        FIELD2: { type: "SINGLE_LINE_TEXT", value: "DUMMY_IDM" },
         additionalField: { value: "additionalValue" },
       },
     });
@@ -970,8 +970,8 @@ describe("AppIndex 登録", () => {
     expect(mockAddRecordFn).toHaveBeenCalledWith({
       app: 123,
       record: {
-        FIELD3: { value: "IN" },
-        FIELD4: { value: "IN" },
+        FIELD3: { type: "SINGLE_LINE_TEXT", value: "IN" },
+        FIELD4: { type: "SINGLE_LINE_TEXT", value: "IN" },
       },
     });
     expect(mockAlertFn).not.toHaveBeenCalled();
@@ -1019,10 +1019,10 @@ describe("AppIndex 登録", () => {
     expect(mockAddRecordFn).toHaveBeenCalledWith({
       app: 123,
       record: {
-        FIELD1: { value: "DUMMY_IDM" },
-        FIELD2: { value: "DUMMY_IDM" },
-        FIELD3: { value: "IN" },
-        FIELD4: { value: "IN" },
+        FIELD1: { type: "SINGLE_LINE_TEXT", value: "DUMMY_IDM" },
+        FIELD2: { type: "SINGLE_LINE_TEXT", value: "DUMMY_IDM" },
+        FIELD3: { type: "SINGLE_LINE_TEXT", value: "IN" },
+        FIELD4: { type: "SINGLE_LINE_TEXT", value: "IN" },
       },
     });
   });

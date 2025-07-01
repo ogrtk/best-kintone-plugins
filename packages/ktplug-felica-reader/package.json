@@ -7,9 +7,10 @@
     "test": "vitest",
     "coverage": "vitest run --coverage ",
     "check": "biome check --write",
-    "build:dev": "pnpm run check && vite build",
-    "dev": "concurrently 'pnpm run build:dev --watch' 'vite dev'",
-    "build": "pnpm run check && vite build && cp ./public/customize.js ./plugin/js/desktop.js && vite build --config vite.plugin.config.js && cp ./public/config.js ./plugin/js/config.js && kintone-simple-plugin-packer --i plugin --o dist/plugin.zip --ppk secrets/private.ppk",
+    "buildcust": "vite build --config vite.config.ts",
+    "buildplugin": "vite build --config vite.plugin.config.ts",
+    "build": "pnpm run check && pnpm run buildcust && pnpm run buildplugin && kintone-simple-plugin-packer --i plugin --o dist/plugin.zip --ppk secrets/private.ppk",
+    "local": "pnpm run buildcust && vite preview --port 5173",
     "deploy": "export $(cat ../../secrets/.kintone.credentials | xargs) && kintone-api-plugin-uploader -f dist/plugin.zip -i dist/pluginId.txt",
     "band": "pnpm run build && pnpm run deploy"
   },

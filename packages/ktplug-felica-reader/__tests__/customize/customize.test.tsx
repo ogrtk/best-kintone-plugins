@@ -1,4 +1,4 @@
-import { AppIndex, AppRecord } from "@/src/components/customize/App";
+import { AppIndex, AppRecord } from "@/src/customize/components/App";
 import type { PluginConfig } from "@/src/types";
 import { restorePluginConfig } from "@ogrtk/shared/kintone-utils";
 import { createRoot } from "react-dom/client";
@@ -19,7 +19,7 @@ globalThis.kintone = {
 } as unknown as typeof kintone;
 
 // kintone api 利用コードをモック化後に読み込み
-await import("@/src/customize");
+await import("@/src/customize/customize");
 
 // プラグインの設定をモック
 vi.mock("@ogrtk/shared/kintone-utils", async () => {

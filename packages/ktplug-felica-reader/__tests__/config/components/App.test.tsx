@@ -8,7 +8,7 @@ import {
 } from "@ogrtk/shared/test-utils";
 import "@testing-library/jest-dom/vitest";
 import { ErrorFallback } from "@/src/ErrorFallback";
-import { App } from "@/src/components/config/App";
+import { App } from "@/src/config/components/App";
 import {
   restorePluginConfig,
   storePluginConfig,

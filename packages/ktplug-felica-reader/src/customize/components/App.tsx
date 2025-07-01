@@ -345,18 +345,31 @@ async function regist(
     config.readConfig.readType === "idm" ||
     config.readConfig.readType === "both"
   ) {
-    record[config.readConfig.idm.fieldCd1] = { value: felicaData.idm };
+    record[config.readConfig.idm.fieldCd1] = {
+      value: felicaData.idm,
+      type: "SINGLE_LINE_TEXT",
+    };
     if (config.readConfig.idm.fieldCd2) {
-      record[config.readConfig.idm.fieldCd2] = { value: felicaData.idm };
+      record[config.readConfig.idm.fieldCd2] = {
+        value: felicaData.idm,
+        type: "SINGLE_LINE_TEXT",
+      };
     }
   }
   if (
     config.readConfig.readType === "memory" ||
     config.readConfig.readType === "both"
   ) {
-    record[config.readConfig.memory.fieldCd1] = { value: felicaData.memory };
+    record[config.readConfig.memory.fieldCd1] = {
+      value: felicaData.memory,
+      type: "SINGLE_LINE_TEXT",
+    };
+
     if (config.readConfig.memory.fieldCd2) {
-      record[config.readConfig.memory.fieldCd2] = { value: felicaData.memory };
+      record[config.readConfig.memory.fieldCd2] = {
+        value: felicaData.memory,
+        type: "SINGLE_LINE_TEXT",
+      };
     }
   }
   if (
