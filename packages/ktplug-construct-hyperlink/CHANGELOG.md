@@ -1,5 +1,11 @@
 # @ogrtk/ktplug-construct-hyperlink
 
+## 1.0.1
+
+### Patch Changes
+
+- 11ad882: vite config and plugin directory structure renewed
+
 ## 1.0.0
 
 ### Major Changes
