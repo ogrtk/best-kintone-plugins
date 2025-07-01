@@ -8,7 +8,7 @@
     "coverage": "vitest run --coverage ",
     "check": "biome check --write",
     "buildcust": "vite build --config vite.config.ts",
-    "buildplugin": "vite build --config vite.plugin.config.ts",
+    "buildplugin": "vite build --config vite.plugin.config.ts --debug",
     "build": "pnpm run check && pnpm run buildcust && pnpm run buildplugin && kintone-simple-plugin-packer --i plugin --o dist/plugin.zip --ppk secrets/private.ppk",
     "local": "pnpm run buildcust && vite preview --port 5173",
     "deploy": "export $(cat ../../secrets/.kintone.credentials | xargs) && kintone-api-plugin-uploader -f dist/plugin.zip -i dist/pluginId.txt",

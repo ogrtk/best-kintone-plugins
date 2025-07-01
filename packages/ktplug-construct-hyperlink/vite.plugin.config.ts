@@ -18,6 +18,10 @@ export default defineConfig({
     outDir: path.resolve(__dirname, "plugin", "js", "config"),
     rollupOptions: {
       input: { config: path.resolve(__dirname, "src", "config", "config.tsx") },
+      external: [
+        path.resolve(__dirname, "src/customize/customize.tsx"),
+        "src/customize/customize.tsx",
+      ],
       output: {
         entryFileNames: "[name].js",
         format: "iife", // 即時実行関数
