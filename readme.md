@@ -14,8 +14,8 @@
 
 | project                                                                   | 対象          | 説明                       |artifact|
 | ------------------------------------------------------------------------- | ----------- | ------------------------ |----|
-| [**fbcust-memorise-input**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-memorise-input)                       | FormBridge用 | 入力値をブラウザに保持         |
-| [**fbcust-random-cd**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-random-cd)                       | FormBridge | ランダムコード値の生成         |
+| [**fbcust-memorise-input**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-memorise-input)                       | FormBridge | 入力値をブラウザに保持         |
+| [**fbcust-random-cd**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-random-cd)                       | FormBridge | ランダムコード値の生成         | [1.0.0](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Ffbcust-random-cd%401.0.0)
 | [**ktplug-construct-hyperlink**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-construct-hyperlink) | kintone  | リンク自動生成 | [1.0.0](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Fktplug-construct-hyperlink%401.0.0)
 | [**ktplug-felica-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug--felica-reader) | kintone  | FeliCa 読取 |
 | [**ktplug-qrcode-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-qrcode-reader)               | kintone  | QRコード読取          |
@@ -37,10 +37,30 @@
 - [Vite](https://vitejs.dev/) (フロントエンドビルドツール)
 - [Biome](https://biomejs.dev/) (コードフォーマッター & Linter)
 
-#### セットアップ手順
+#### 開発環境セットアップ手順
 
-VSCode、devcontainerを導入し、本リポジトリをクローン後、開発用コンテナで起動してください
-
+- VSCode、devcontainerを導入
+- 本リポジトリをclone
+- github上のnpmパッケージ参照設定
+  - github上で、packageの参照権限を持つ[Personal Access Token(classic)を発行](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)
+  - `.devcontainer`ディレクトリ配下に`.env`を作成
+    ```text
+    NODE_AUTH_TOKEN=ghp_xxxxxxxxxxxxxxxxxxx(Personal Access Tokenの値を設定)
+    ```
+- 開発用コンテナで起動
+- kintone用シークレットの設定
+  - kintone開発環境の認証情報
+    - cliでpluginをアップロードするために使用
+    - プロジェクトルートに`secret`ディレクトリを作成し、`.kintone.credentials`ファイルを作成
+      ```text
+      KINTONE_SUBDOMAIN=https://your-sub-domain.cybozu.com
+      KINTONE_USERNAME=yourUserName
+      KINTONE_PASSWORD=yourPassword
+      ```
+    - 動作確認 
+      ```shell
+      pnpm run --filter ktplug-construct-hyperlink band
+      ```
 
 ### 共通コンポーネント
 
