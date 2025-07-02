@@ -8,18 +8,18 @@
         }
       ],
       "summary": "test",
-      "id": "five-teams-grow"
+      "id": "eight-poets-tickle"
     }
   ],
   "releases": [
     {
       "name": "@ogrtk/ktplug-felica-reader",
       "type": "patch",
-      "oldVersion": "0.8.3",
+      "oldVersion": "0.8.4",
       "changesets": [
-        "five-teams-grow"
+        "eight-poets-tickle"
       ],
-      "newVersion": "0.8.4"
+      "newVersion": "0.8.5"
     }
   ]
 }
