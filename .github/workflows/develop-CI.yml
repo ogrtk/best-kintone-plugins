@@ -20,6 +20,8 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PAT_FOR_PACKAGES }}
         run: |
           corepack enable
           pnpm install
