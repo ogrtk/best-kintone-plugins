@@ -123,7 +123,10 @@ async function regist(app: number, decodedText: string, config: PluginConfig) {
   }
 
   const record: KintoneRecord = {};
-  record[config.qrCode.field] = { value: decodedText };
+  record[config.qrCode.field] = {
+    type: "SINGLE_LINE_TEXT",
+    value: decodedText,
+  };
   if (
     config.useCase.listRegist?.useAdditionalValues &&
     config.useCase.listRegist.additionalValues

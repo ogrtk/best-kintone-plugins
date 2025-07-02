@@ -1,7 +1,7 @@
 import {
   type QrReadedAction,
   QrReader,
-} from "@/src/components/customize/QrReader";
+} from "@/src/customize/components/QrReader";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { QrcodeErrorCallback, QrcodeSuccessCallback } from "html5-qrcode";

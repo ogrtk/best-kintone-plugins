@@ -5,7 +5,7 @@ import {
   withinCheckBoxGroup,
 } from "@ogrtk/shared/test-utils";
 import "@testing-library/jest-dom/vitest";
-import { App } from "@/src/components/config/App";
+import { App } from "@/src/config/components/App";
 import {
   restorePluginConfig,
   storePluginConfig,

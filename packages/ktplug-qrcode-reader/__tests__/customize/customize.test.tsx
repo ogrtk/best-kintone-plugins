@@ -1,4 +1,4 @@
-import { AppIndex, AppRecord } from "@/src/components/customize/App";
+import { AppIndex, AppRecord } from "@/src/customize/components/App";
 import type { PluginConfig } from "@/src/types";
 import { restorePluginConfig } from "@ogrtk/shared/kintone-utils";
 import { createRoot } from "react-dom/client";
@@ -19,7 +19,7 @@ globalThis.kintone = {
 } as unknown as typeof kintone;
 
 // kintone api 利用コードをモック化後に読み込み
-await import("@/src/customize");
+await import("@/src/customize/customize");
 
 // プラグインの設定をモック
 vi.mock("@ogrtk/shared/kintone-utils", async () => {
@@ -40,7 +40,7 @@ vi.mock("react-dom/client", () => ({
 }));
 
 beforeEach(() => {
-  // await import("@/src/customize");で実行された
+  // await import("@/src/customize/customize");で実行された
   // globalThis.kintone.events.on の呼出履歴が消去されてしまうため、
   // vi.clearAllMocks();は使わずに、個別にmockClearする
   (globalThis.kintone.app.getHeaderSpaceElement as Mock).mockClear();

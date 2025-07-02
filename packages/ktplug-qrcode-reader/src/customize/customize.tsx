@@ -1,11 +1,7 @@
 import { restorePluginConfig } from "@ogrtk/shared/kintone-utils";
 import { createRoot } from "react-dom/client";
-import {
-  AppIndex,
-  AppRecord,
-  type IndexMode,
-} from "./components/customize/App";
-import { type PluginConfig, pluginConfigSchema } from "./types";
+import { type PluginConfig, pluginConfigSchema } from "../types";
+import { AppIndex, AppRecord, type IndexMode } from "./components/App";
 
 /**
  * カスタマイズのjavascriptエントリポイント
