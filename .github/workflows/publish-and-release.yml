@@ -58,14 +58,69 @@ jobs:
       - name: Validate release config
         run: bash .github/scripts/validate-release-config.sh
 
-      - name: Create version PR
-        uses: changesets/action@v1
-        with:
-          version: pnpm changeset version
-          commit: "chore: version packages"
-          title: "Version Packages"
+      - name: Run changeset version and commit
+        run: pnpm changeset version
+
+      - name: Update manifest.json to match new package.json version
+        run: |
+          UPDATED=$(jq -r '.[].name' .changeset/pre.json 2>/dev/null || pnpm changeset status --output=updated.json && jq -r '.[].name' updated.json)
+          for pkg in $UPDATED; do
+            VERSION=$(node -p "require('./packages/$pkg/package.json').version")
+            MANIFEST_PATH="packages/$pkg/plugin/manifest.json"
+            if [ -f "$MANIFEST_PATH" ]; then
+              echo "🔄 Updating $MANIFEST_PATH to version $VERSION"
+              jq ".version = \"$VERSION\"" "$MANIFEST_PATH" > "$MANIFEST_PATH.tmp" && mv "$MANIFEST_PATH.tmp" "$MANIFEST_PATH"
+              git add "$MANIFEST_PATH"
+            fi
+          done
+
+      - name: Commit manifest.json version updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: version packages and update manifest.json" || echo "No changes to commit"
+
+      - name: Create Pull Request for version update using GitHub CLI
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git push origin HEAD:refs/heads/changeset-release/main
+          gh pr create \
+            --base main \
+            --head changeset-release/main \
+            --title "Version Packages" \
+            --body "This PR updates the version of packages and manifest.json based on the changeset."
+
+  # prepare-version-pr:
+  #   needs: detect-changeset
+  #   if: needs.detect-changeset.outputs.has_changesets == 'true'
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     NODE_AUTH_TOKEN: ${{ secrets.PAT_FOR_PACKAGES }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20
+
+  #     - name: Install dependencies
+  #       run: |
+  #         corepack enable
+  #         pnpm install
+
+  #     - name: Validate release config
+  #       run: bash .github/scripts/validate-release-config.sh
+
+  #     - name: Create version PR
+  #       uses: changesets/action@v1
+  #       with:
+  #         version: pnpm changeset version
+  #         commit: "chore: version packages"
+  #         title: "Version Packages"
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   detect-version-change:
     if: "github.event.head_commit.message == 'chore: version packages'"
