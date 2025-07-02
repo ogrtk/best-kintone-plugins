@@ -1,0 +1,25 @@
+{
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@ogrtk/ktplug-qrcode-reader",
+          "type": "patch"
+        }
+      ],
+      "summary": "strucure renewed",
+      "id": "little-sites-shine"
+    }
+  ],
+  "releases": [
+    {
+      "name": "@ogrtk/ktplug-qrcode-reader",
+      "type": "patch",
+      "oldVersion": "0.8.1",
+      "changesets": [
+        "little-sites-shine"
+      ],
+      "newVersion": "0.8.2"
+    }
+  ]
+}
