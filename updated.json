@@ -1,0 +1,25 @@
+{
+  "changesets": [
+    {
+      "releases": [
+        {
+          "name": "@ogrtk/ktplug-felica-reader",
+          "type": "patch"
+        }
+      ],
+      "summary": "test",
+      "id": "clean-humans-flash"
+    }
+  ],
+  "releases": [
+    {
+      "name": "@ogrtk/ktplug-felica-reader",
+      "type": "patch",
+      "oldVersion": "0.8.5",
+      "changesets": [
+        "clean-humans-flash"
+      ],
+      "newVersion": "0.8.6"
+    }
+  ]
+}
