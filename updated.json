@@ -3,23 +3,23 @@
     {
       "releases": [
         {
-          "name": "@ogrtk/ktplug-felica-reader",
+          "name": "@ogrtk/ktplug-construct-hyperlink",
           "type": "patch"
         }
       ],
-      "summary": "test",
-      "id": "rude-grapes-clean"
+      "summary": "plugin ver fixed",
+      "id": "vast-rice-wink"
     }
   ],
   "releases": [
     {
-      "name": "@ogrtk/ktplug-felica-reader",
+      "name": "@ogrtk/ktplug-construct-hyperlink",
       "type": "patch",
-      "oldVersion": "0.8.6",
+      "oldVersion": "1.0.1",
       "changesets": [
-        "rude-grapes-clean"
+        "vast-rice-wink"
       ],
-      "newVersion": "0.8.7"
+      "newVersion": "1.0.2"
     }
   ]
 }

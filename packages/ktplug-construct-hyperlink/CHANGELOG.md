@@ -1,5 +1,11 @@
 # @ogrtk/ktplug-construct-hyperlink
 
+## 1.0.2
+
+### Patch Changes
+
+- dbf547f: plugin ver fixed
+
 ## 1.0.1
 
 ### Patch Changes
