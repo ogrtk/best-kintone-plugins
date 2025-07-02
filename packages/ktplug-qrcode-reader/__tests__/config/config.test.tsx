@@ -1,5 +1,5 @@
 import { ErrorFallback } from "@/src/ErrorFallback";
-import { App } from "@/src/components/config/App";
+import { App } from "@/src/config/components/App";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { waitFor } from "@testing-library/react";
 import { Suspense } from "react";
@@ -37,7 +37,7 @@ describe("plugin設定画面", () => {
     (globalThis.document.getElementById as Mock).mockReturnValue(rootEl);
 
     /* action */
-    await import(`@/src/config?timestamp=${Date.now()}`);
+    await import(`@/src/config/config?timestamp=${Date.now()}`);
 
     /* assert */
     expect(createRoot as Mock).toHaveBeenCalledOnce();
@@ -75,7 +75,7 @@ describe("plugin設定画面", () => {
     (globalThis.document.getElementById as Mock).mockReturnValue(undefined);
 
     /* action */
-    import(`@/src/config?timestamp=${Date.now()}`);
+    import(`@/src/config/config?timestamp=${Date.now()}`);
 
     /* assert */
     await waitFor(async () => {

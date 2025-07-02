@@ -2,8 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { ErrorBoundary } from "react-error-boundary";
-import { ErrorFallback } from "./ErrorFallback";
-import { App } from "./components/config/App";
+import { ErrorFallback } from "../ErrorFallback";
+import { App } from "./components/App";
 
 /**
  * プラグイン設定画面のjavascriptエントリポイント

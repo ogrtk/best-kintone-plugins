@@ -13,8 +13,8 @@ import {
   AppIndex,
   AppRecord,
   type IndexMode,
-} from "@/src/components/customize/App";
-import { QrReader } from "@/src/components/customize/QrReader";
+} from "@/src/customize/components/App";
+import { QrReader } from "@/src/customize/components/QrReader";
 import type { PluginConfig } from "@/src/types";
 import { suppressNoisyError } from "@ogrtk/shared/test-utils";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
@@ -27,7 +27,7 @@ import { ErrorBoundary } from "react-error-boundary";
 
 // QRリーダーコンポーネントのmock
 let mockQrReaderDecodedString = "";
-vi.mock("@/src/components/customize/QrReader", () => ({
+vi.mock("@/src/customize/components/QrReader", () => ({
   QrReader: vi.fn(({ action }: { action: (arg: string) => void }) => (
     <button
       type="button"
@@ -189,7 +189,7 @@ describe("AppIndex > regist ", () => {
     expect(mockAddRecordFn).toHaveBeenCalledWith({
       app: 123,
       record: {
-        qrCodeField: { value: "qrKeyValue" },
+        qrCodeField: { type: "SINGLE_LINE_TEXT", value: "qrKeyValue" },
       },
     });
   });
@@ -258,7 +258,7 @@ describe("AppIndex > regist ", () => {
     expect(mockAddRecordFn).toHaveBeenCalledWith({
       app: 123,
       record: {
-        qrCodeField: { value: "qrKeyValue" },
+        qrCodeField: { type: "SINGLE_LINE_TEXT", value: "qrKeyValue" },
       },
     });
   });
@@ -292,7 +292,7 @@ describe("AppIndex > regist ", () => {
     expect(mockAddRecordFn).toHaveBeenCalledWith({
       app: 123,
       record: {
-        qrCodeField: { value: "qrKeyValue" },
+        qrCodeField: { type: "SINGLE_LINE_TEXT", value: "qrKeyValue" },
       },
     });
   });
@@ -333,9 +333,13 @@ describe("AppIndex > regist ", () => {
     expect(mockAddRecordFn).toHaveBeenCalledWith({
       app: 123,
       record: {
-        qrCodeField: { value: "qrKeyValue" },
-        additinalField1: { value: "additinalValue1" },
-        additinalField2: { value: "additinalValue2" },
+        qrCodeField: { type: "SINGLE_LINE_TEXT", value: "qrKeyValue" },
+        additinalField1: {
+          value: "additinalValue1",
+        },
+        additinalField2: {
+          value: "additinalValue2",
+        },
       },
     });
   });
@@ -373,7 +377,7 @@ describe("AppIndex > regist ", () => {
     expect(mockAddRecordFn).toHaveBeenCalledWith({
       app: 123,
       record: {
-        qrCodeField: { value: "qrKeyValue" },
+        qrCodeField: { type: "SINGLE_LINE_TEXT", value: "qrKeyValue" },
       },
     });
   });

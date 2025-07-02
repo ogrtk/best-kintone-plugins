@@ -16,13 +16,13 @@
 	},
 	"desktop": {
 		"js": [
-			"js/desktop.js"
+			"js/customize/desktop.js"
 		]
 	},
 	"config": {
 		"html": "html/config.html",
 		"js": [
-			"js/config.js"
+			"js/config/config.js"
 		]
 	}
 }
