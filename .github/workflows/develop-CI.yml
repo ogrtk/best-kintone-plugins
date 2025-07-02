@@ -26,6 +26,9 @@ jobs:
           corepack enable
           pnpm install
 
+      - name: Fetch full history
+        run: git fetch --unshallow
+
       - name: Fetch main
         run: git fetch origin main --depth=100
 
