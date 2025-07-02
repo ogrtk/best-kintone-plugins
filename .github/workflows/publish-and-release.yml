@@ -66,6 +66,13 @@ jobs:
       - name: Run changeset version and commit
         run: pnpm changeset version
 
+      - name: Commit version bump (package.json and changelog)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: version packages" || echo "No version changes to commit"
+
       - name: Update manifest.json to match new package.json version
         run: |
           UPDATED=$(jq -r '.releases[].name' updated.json)
