@@ -13,24 +13,25 @@ export default defineConfig({
   plugins: [tsconfigPaths()],
   build: {
     sourcemap: true,
+    emptyOutDir: true,
+    // plugin/js/customizeディレクトリ配下に出力
+    outDir: path.resolve(__dirname, "plugin", "js", "customize"),
     rollupOptions: {
       treeshake: true,
-      input: { customize: path.resolve(__dirname, "src", "customize.tsx") },
+      input: {
+        desktop: path.resolve(__dirname, "src", "customize", "customize.tsx"),
+      },
       output: {
         // 即時実行関数
         format: "iife",
-        // 開発サーバで扱えるよう、publicディレクトリの下にビルド後のファイルを生成
-        dir: "public",
         entryFileNames: "[name].js",
       },
     },
   },
+  publicDir: false, // public は使わない
   server: {
+    port: 5173,
     https: baseConfig.server?.https,
-    open: path.join("public", "customize.js"),
-    // publicディレクトリを監視対象に（更新時に開発サーバで読み込み直す）
-    watch: {
-      ignored: ["!**/public/**"],
-    },
+    open: "https://localhost:5173/desktop.js",
   },
 });
