@@ -54,7 +54,7 @@ jobs:
         id: set_output
         run: echo "tests_passed=true" >> $GITHUB_OUTPUT
 
- create-pr:
+  create-pr:
     name: Create PR to main
     needs: test
     if: needs.test.outputs.tests_passed == 'true'
