@@ -1,0 +1,64 @@
+name: CI and Create PR to main
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    outputs:
+      tests_passed: ${{ steps.set_output.outputs.tests_passed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          pnpm install
+
+      - name: Detect updated packages
+        id: detect
+        run: |
+          git fetch origin main
+          CHANGED=$(git diff --name-only origin/main...HEAD)
+          PACKAGES=$(echo "$CHANGED" | grep '^packages/' | cut -d/ -f2 | sort -u)
+          
+          FILTERS=""
+          for pkg in $PACKAGES; do
+            FILTERS="$FILTERS --filter $pkg..."
+          done
+
+          echo "filters=$FILTERS" >> $GITHUB_OUTPUT
+
+      - name: Run tests only for updated packages
+        if: steps.detect.outputs.filters != ''
+        run: pnpm ${{ steps.detect.outputs.filters }} --if-present run test
+
+      - name: Set test output flag
+        id: set_output
+        run: echo "tests_passed=true" >> $GITHUB_OUTPUT
+
+  create-pr:
+    name: Create PR to main
+    needs: test
+    if: needs.test.outputs.tests_passed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create Pull Request from develop to main
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: develop
+          title: "Auto PR: develop → main"
+          body: "This PR was automatically created after successful tests on develop."
