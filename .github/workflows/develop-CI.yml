@@ -54,19 +54,26 @@ jobs:
         id: set_output
         run: echo "tests_passed=true" >> $GITHUB_OUTPUT
 
-  create-pr:
+ create-pr:
     name: Create PR to main
     needs: test
     if: needs.test.outputs.tests_passed == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Create Pull Request from develop to main
-        uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
-          branch: develop
-          title: "Auto PR: develop → main"
-          body: "This PR was automatically created after successful tests on develop."
+          ref: develop
+
+      - name: Set up GitHub CLI
+        run: gh --version
+
+      - name: Create Pull Request using gh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base main \
+            --head develop \
+            --title "Auto PR: develop → main" \
+            --body "This PR was automatically created after successful tests on develop." \
+            || echo "PR already exists or creation failed"
