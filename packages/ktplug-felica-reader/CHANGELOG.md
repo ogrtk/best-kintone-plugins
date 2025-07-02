@@ -1,5 +1,11 @@
 # @ogrtk/ktplug-felica-reader
 
+## 0.8.5
+
+### Patch Changes
+
+- 35b5908: test
+
 ## 0.8.4
 
 ### Patch Changes
