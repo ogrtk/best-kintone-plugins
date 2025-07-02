@@ -26,6 +26,9 @@ jobs:
           corepack enable
           pnpm install
 
+      - name: Fetch main
+        run: git fetch origin main --depth=100
+
       - name: Detect updated packages
         id: detect
         run: |
