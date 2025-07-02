@@ -200,11 +200,6 @@ jobs:
           echo "Running: pnpm $FILTERS run build"
           pnpm $FILTERS run build
 
-      - name: Install GitHub CLI
-        run: |
-          sudo apt update
-          sudo apt install -y gh
-
       - name: Publish and release per updated package
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
