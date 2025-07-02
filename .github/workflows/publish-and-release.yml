@@ -112,7 +112,7 @@ jobs:
             --body "This PR updates the version of packages and manifest.json based on the changeset."
 
   detect-version-change:
-    if: "github.event.head_commit.message == 'chore: version packages'"
+    if: contains(github.event.head_commit.message, 'changeset-release/main')
     runs-on: ubuntu-latest
     outputs:
       should_run: ${{ steps.check.outputs.version_change }}
