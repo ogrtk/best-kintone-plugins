@@ -69,7 +69,7 @@ jobs:
 
       - name: Create Pull Request using gh
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT_FOR_PACKAGES }}
         run: |
           gh pr create \
             --base main \
