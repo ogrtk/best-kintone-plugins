@@ -58,6 +58,18 @@ jobs:
       - name: Validate release config
         run: bash .github/scripts/validate-release-config.sh
 
+      - name: Update manifest.json version to match package.json
+        run: |
+          UPDATED=$(pnpm changeset status --output=updated.json && jq -r '.[].name' updated.json)
+          for pkg in $UPDATED; do
+            VERSION=$(node -p "require('./packages/$pkg/package.json').version")
+            MANIFEST_PATH="packages/$pkg/plugin/manifest.json"
+            if [ -f "$MANIFEST_PATH" ]; then
+              echo "🔄 Updating $MANIFEST_PATH to version $VERSION"
+              jq ".version = \"$VERSION\"" "$MANIFEST_PATH" > "$MANIFEST_PATH.tmp" && mv "$MANIFEST_PATH.tmp" "$MANIFEST_PATH"
+            fi
+          done
+
       - name: Create version PR
         uses: changesets/action@v1
         with:
