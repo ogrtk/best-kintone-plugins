@@ -66,13 +66,6 @@ jobs:
       - name: Run changeset version and commit
         run: pnpm changeset version
 
-      - name: Commit version bump (package.json and changelog)
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "chore: version packages" || echo "No version changes to commit"
-
       - name: Update manifest.json to match new package.json version
         run: |
           UPDATED=$(jq -r '.releases[].name' updated.json)
@@ -97,7 +90,6 @@ jobs:
             if [ -f "$MANIFEST_PATH" ]; then
               echo "🔄 Updating $MANIFEST_PATH to version $VERSION"
               jq ".version = \"$VERSION\"" "$MANIFEST_PATH" > "$MANIFEST_PATH.tmp" && mv "$MANIFEST_PATH.tmp" "$MANIFEST_PATH"
-              git add "$MANIFEST_PATH"
             fi
           done
 
@@ -105,7 +97,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore: version packages and update manifest.json" || echo "No changes to commit"
+          git add .
+          git commit -m "chore: version packages" || echo "No changes to commit"
 
       - name: Create Pull Request for version update using GitHub CLI
         env:
@@ -119,7 +112,7 @@ jobs:
             --body "This PR updates the version of packages and manifest.json based on the changeset."
 
   detect-version-change:
-    if: "github.event.head_commit.message == 'Version Packages'"
+    if: "github.event.head_commit.message == 'chore: version packages'"
     runs-on: ubuntu-latest
     outputs:
       should_run: ${{ steps.check.outputs.version_change }}
