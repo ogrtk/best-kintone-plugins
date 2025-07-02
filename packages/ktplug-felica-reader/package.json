@@ -1,6 +1,6 @@
 {
   "name": "@ogrtk/ktplug-felica-reader",
-  "version": "0.8.6",
+  "version": "0.8.7",
   "main": "index.js",
   "type": "module",
   "scripts": {

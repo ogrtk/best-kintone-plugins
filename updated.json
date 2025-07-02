@@ -8,18 +8,18 @@
         }
       ],
       "summary": "test",
-      "id": "clean-humans-flash"
+      "id": "rude-grapes-clean"
     }
   ],
   "releases": [
     {
       "name": "@ogrtk/ktplug-felica-reader",
       "type": "patch",
-      "oldVersion": "0.8.5",
+      "oldVersion": "0.8.6",
       "changesets": [
-        "clean-humans-flash"
+        "rude-grapes-clean"
       ],
-      "newVersion": "0.8.6"
+      "newVersion": "0.8.7"
     }
   ]
 }
