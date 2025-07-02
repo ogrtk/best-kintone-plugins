@@ -58,12 +58,16 @@ jobs:
       - name: Validate release config
         run: bash .github/scripts/validate-release-config.sh
 
+      - name: Get packages to be versioned by changeset
+        run: |
+          pnpm changeset status --output=updated.json
+          cat updated.json
+
       - name: Run changeset version and commit
         run: pnpm changeset version
 
       - name: Update manifest.json to match new package.json version
         run: |
-          pnpm changeset status --output=updated.json
           UPDATED=$(jq -r '.[].name' updated.json)
           for pkg in $UPDATED; do
             VERSION=$(node -p "require('./packages/$pkg/package.json').version")
