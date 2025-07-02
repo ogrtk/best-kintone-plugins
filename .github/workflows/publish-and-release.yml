@@ -118,39 +118,8 @@ jobs:
             --title "Version Packages" \
             --body "This PR updates the version of packages and manifest.json based on the changeset."
 
-  # prepare-version-pr:
-  #   needs: detect-changeset
-  #   if: needs.detect-changeset.outputs.has_changesets == 'true'
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     NODE_AUTH_TOKEN: ${{ secrets.PAT_FOR_PACKAGES }}
-  #   steps:
-  #     - uses: actions/checkout@v4
-
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20
-
-  #     - name: Install dependencies
-  #       run: |
-  #         corepack enable
-  #         pnpm install
-
-  #     - name: Validate release config
-  #       run: bash .github/scripts/validate-release-config.sh
-
-  #     - name: Create version PR
-  #       uses: changesets/action@v1
-  #       with:
-  #         version: pnpm changeset version
-  #         commit: "chore: version packages"
-  #         title: "Version Packages"
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   detect-version-change:
-    if: "github.event.head_commit.message == 'chore: version packages'"
+    if: "github.event.head_commit.message == 'Version Packages'"
     runs-on: ubuntu-latest
     outputs:
       should_run: ${{ steps.check.outputs.version_change }}
