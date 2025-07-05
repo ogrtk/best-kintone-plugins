@@ -16,9 +16,9 @@
 | ------------------------------------------------------------------------- | ----------- | ------------------------ |----|
 | [**fbcust-memorise-input**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-memorise-input)                       | FormBridge | 入力値をブラウザに保持         |
 | [**fbcust-random-cd**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-random-cd)                       | FormBridge | ランダムコード値の生成         | [1.0.0](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Ffbcust-random-cd%401.0.0)
-| [**ktplug-construct-hyperlink**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-construct-hyperlink) | kintone  | リンク自動生成 | [1.0.0](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Fktplug-construct-hyperlink%401.0.0)
-| [**ktplug-felica-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug--felica-reader) | kintone  | FeliCa 読取 |
-| [**ktplug-qrcode-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-qrcode-reader)               | kintone  | QRコード読取          |
+| [**ktplug-construct-hyperlink**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-construct-hyperlink) | kintone  | リンク自動生成 | [1.0.2](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Fktplug-construct-hyperlink%401.0.2)
+| [**ktplug-felica-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug--felica-reader) | kintone  | FeliCa 読取 | [0.8.7](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Fktplug-felica-reader%400.8.7)
+| [**ktplug-qrcode-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-qrcode-reader)               | kintone  | QRコード読取          |[0.8.2](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Fktplug-qrcode-reader%400.8.2)
 | [**kvcust-prefilled-formlink**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/kvcust-prefilled-formlink)               | kViewer/FormBridge  | 値設定済フォームへのリンク生成          |
 | [**kvcust-show-lastupdate**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/kvcust-show-lastupdate)               | kViewer  | 最終更新日の表示          |
 
@@ -28,7 +28,7 @@
 
 ### 環境構築
 
-#### 必要なツール
+#### 利用ツール
 
 このリポジトリでは以下のツールを使用しています。
 
@@ -49,109 +49,99 @@
     ```
 - 開発用コンテナで起動
 - kintone用シークレットの設定
-  - kintone開発環境の認証情報
-    - cliでpluginをアップロードするために使用
-    - プロジェクトルートに`secret`ディレクトリを作成し、`.kintone.credentials`ファイルを作成
+  - 事前に[kintone開発環境を取得](https://cybozu.dev/ja/kintone/developer-license/)し、管理者アカウントの認証情報を得ておいてください。
+    - cliでpluginをアップロードするために使用します。
+    - プロジェクトルートに`secret`ディレクトリを作成し、`.kintone.credentials`ファイルを作成してください。
       ```text
       KINTONE_SUBDOMAIN=https://your-sub-domain.cybozu.com
       KINTONE_USERNAME=yourUserName
       KINTONE_PASSWORD=yourPassword
       ```
-    - 動作確認 
-      ```shell
-      pnpm run --filter ktplug-construct-hyperlink band
-      ```
+    - 動作確認
+      - プラグインのプロジェクトで`band`(build & deploy)を実行
+        ```shell
+        pnpm run --filter ktplug-construct-hyperlink band
+        ```
 
-### 共通コンポーネント
+#### プラグイン開発時のppk(秘密鍵)
 
-このリポジトリには、複数のプロジェクトで利用可能な共通コンポーネントが含まれています。
-`packages/` 内の共通モジュールを適切に import して利用してください。
+- 開発者用ppk
+  - 上記手順に沿って、端末ローカルにcloneしたレポジトリから プラグインを`band`(build & deploy)した場合、その環境独自のppkファイルがプラグインの各プロジェクトで生成されます。
+  - 各開発者が手元で用意するkintoneの開発環境では、このppkを使って更新ビルドしたプラグインを利用してください。
 
-#### 利用方法
+- リリースビルド用ppk
+  - リリースビルド用のppkは、本リポジトリのsecretsとして設定しており、github actionsによるCIでのビルド時に利用、一貫したppkを用いるため、kintone環境でバージョンアップ後も同じプラグインとして認識されます。
+  - 元となるppkファイルは、リポジトリ管理者が別のprivateリポジトリで管理しています。
+  - あらたなpluginを作成する場合、ビルド可能となった段階で、リポジトリ管理者にppkの発行を依頼してください。
 
-##### 1. `vite.config.ts` で共通の Vite 設定を利用
+- リポジトリ管理者でのppk発行作業
+  - 既存プラグインのppkを復元
+    - privateリポジトリから、`ppk_store.json`を取得し、リポジトリルートに配置
+    - `pnpm restore-ppk`を実行すると、既存pluginの各packageにppkファイルが配置されます（`secrets/private.ppk`）。
+    - 新規に作成されたpluginのpackageをビルド(`pnpm run --filter (package名) build`)し、ppkファイルを生成します。
+    - `pnpm collect-ppk`を実行すると、pluginの各packageからppkの情報を収集し、リポジトリルートの`ppk_store.json`が更新されます。
+    - 更新後の`ppk_store.json`を、privateリポジトリにpushします。privateリポジトリのactionsにより、自動的に本リポジトリのsecretsへ反映されます。
 
-```ts
-import baseConfig from "../../vite.config";
+##### 開発サーバ用証明書設定
 
-export default defineConfig({
-  ...baseConfig,
-  server: {
-    https: baseConfig.server?.https,
-  },
-});
-```
+開発用 Web サーバの立ち上げ用に、モノレポのルートに配置された証明書ファイル を `baseConfig` から取得することで、全プロジェクトで統一した HTTPS 環境を提供できます。
 
-開発用 Web サーバを立ち上げる際、モノレポのルートに配置された証明書ファイル (certificationフォルダを作成し秘密鍵・証明書を配置してください) を `baseConfig` から取得することで、全プロジェクトで統一した HTTPS 環境を提供できます。
+- リポジトリルートにcertificationフォルダを作成し秘密鍵・証明書を配置してください
+  - localhost.crt
+  - localhost.key
+- 各packageの`vite.config.ts` で、リポジトリルートの共通 Vite 設定を利用
 
-##### 2. `zod` を用いたバリデーションと `submit` 時の処理
+  ```ts
+  import baseConfig from "../../vite.config";
 
-このリポジトリでは、`zod` を利用してバリデーションスキーマを定義し、`react-hook-form` と組み合わせてフォームのバリデーションを行います。以下は `ktplug-qrcode-reader` での実装例です。
-
-```tsx
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { KintoneLikeCheckBox } from "@ogrtk/shared-components";
-
-const schema = z.object({
-  agreement: z.literal("yes").refine(value => value === "yes", {
-    message: "同意が必要です",
-  }),
-});
-
-function ExampleComponent() {
-  const formMethods = useForm({
-    resolver: zodResolver(schema),
+  export default defineConfig({
+    ...baseConfig,
+    server: {
+      https: baseConfig.server?.https,
+    },
   });
+  ```
 
-  const onSubmit = (data: any) => {
-    console.log("送信データ:", data);
-  };
 
-  return (
-    <form onSubmit={formMethods.handleSubmit(onSubmit)}>
-      <KintoneLikeCheckBox
-        rhfMethods={formMethods}
-        label="同意する"
-        description="利用規約に同意してください"
-        name="agreement"
-        options={[{ code: "yes", label: "はい" }]}
-        required
-      />
-      <button type="submit">送信</button>
-    </form>
-  );
-}
+### 開発の流れ（ブランチ戦略） 
+
+#### 機能開発時
+
+```mermaid
+gitGraph
+commit id:"start"
+branch develop
+commit id:"1 feature commit(CI[test])"
+checkout main
+merge develop id:"2 merge PR"
 ```
 
-##### 3. `zod` 用の各種ユーティリティ
+1. 機能開発をコミット
+   1. actions でテスト、mainへのPR作成  
+1. PRをマージしてmainへ反映
 
-このリポジトリでは、`zodUtils.ts` に `zod` スキーマを補助するユーティリティ関数を提供しています。
-
-###### 例）unsetBoolDependentField を用いた動的バリデーション
-
-`unsetBoolDependentField` は、特定のフィールドが `true` でない場合に、依存するフィールドの値を `undefined` にする `zod` 用の `preprocess` 関数です。
-
-```ts
-import { z } from "zod";
-import { unsetBoolDependentField } from "@ogrtk/shared-components/lib/zodUtils";
-
-const schema = z.object({
-  isChecked: z.boolean(),
-  dependentField: z.preprocess(
-    unsetBoolDependentField([
-      { conditionField: "isChecked", dependentField: "dependentField" },
-    ]),
-    z.string().optional()
-  ),
-});
-
-const validData = schema.parse({ isChecked: false, dependentField: "削除される" });
-console.log(validData); // { isChecked: false }
+#### リリース時
+```mermaid
+gitGraph
+commit id:"start"
+branch develop
+commit id:"1 version commit(CI[test])"
+checkout main
+merge develop id:"2 merge PR(CI[verup])"
+branch changeset-release/main
+commit id:"3 verup"
+checkout main
+merge changeset-release/main id:"4 merge PR(CI[Release])"
 ```
 
-この関数を使用することで、条件に応じて不要なフィールドをバリデーション前に自動削除できます。
+1. changeset でバージョンアップ情報を作成し、コミット
+   1. actions でテスト、mainへのPR作成  
+1. PRをマージしてmainへ反映
+   1. actions で version up 操作を実施。changeset-release/mainにプッシュし、mainへのPR作成
+1. （前のactionsで作成されたコミット）
+1. PRをマージしてmainへ反映
+   1. actions で release
+
 
 ## ライセンス
 
