@@ -10,7 +10,8 @@
 		"check": "pnpm -r --if-present run check",
 		"test": "pnpm -r --if-present run test",
 		"collect-ppks": "tsx scripts/collect-ppks.ts",
-		"restore-ppks": "tsx scripts/restore-ppks.ts"
+		"restore-ppks": "tsx scripts/restore-ppks.ts",
+		"catchup": "git checkout main && git pull && git checkout develop && git merge main"
 	},
 	"keywords": [],
 	"author": "",
