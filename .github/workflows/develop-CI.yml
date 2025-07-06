@@ -32,6 +32,12 @@ jobs:
       - name: Fetch main
         run: git fetch origin main --depth=100
 
+      - name: Restore certificate files
+        run: |
+          mkdir -p certificate
+          echo "${CERTIFICATE_CRT}" | base64 -d > certificate/localhost.crt
+          echo "${CERTIFICATE_KEY}" | base64 -d > certificate/localhost.key
+
       - name: Detect updated packages
         id: detect
         run: |
