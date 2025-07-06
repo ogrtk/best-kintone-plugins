@@ -38,6 +38,9 @@ jobs:
           echo "${CERTIFICATE_CRT}" | base64 -d > certificate/localhost.crt
           echo "${CERTIFICATE_KEY}" | base64 -d > certificate/localhost.key
 
+      - name: Build shared package
+        run: pnpm --filter @ogrtk/shared run build
+
       - name: Detect updated packages
         id: detect
         run: |
