@@ -1,5 +1,9 @@
-import { describe, it, expect } from "vitest";
-import { pluginConfigSchema, type PluginConfig, type LinkConfig } from "@/src/types";
+import {
+  type LinkConfig,
+  type PluginConfig,
+  pluginConfigSchema,
+} from "@/src/types";
+import { describe, expect, it } from "vitest";
 
 describe("型定義", () => {
   describe("pluginConfigSchema", () => {
@@ -343,7 +347,7 @@ describe("型定義", () => {
 
       // LinkConfig型の推論をテスト
       const linkConfig: LinkConfig = validConfig.linkConfigs[0];
-      
+
       expect(typeof linkConfig.linkFieldCode).toBe("string");
       expect(typeof linkConfig.urlPrefix).toBe("string");
       expect(typeof linkConfig.urlPartsFieldCode).toBe("string");

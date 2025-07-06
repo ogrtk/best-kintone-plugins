@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
 import { ErrorFallback } from "@/src/ErrorFallback";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 
 describe("ErrorFallback", () => {
   it("エラーメッセージが表示される", () => {
@@ -8,10 +8,10 @@ describe("ErrorFallback", () => {
     const mockResetErrorBoundary = vi.fn();
 
     render(
-      <ErrorFallback 
-        error={mockError} 
-        resetErrorBoundary={mockResetErrorBoundary} 
-      />
+      <ErrorFallback
+        error={mockError}
+        resetErrorBoundary={mockResetErrorBoundary}
+      />,
     );
 
     // エラーメッセージが表示されることを確認
@@ -24,10 +24,10 @@ describe("ErrorFallback", () => {
     const mockResetErrorBoundary = vi.fn();
 
     render(
-      <ErrorFallback 
-        error={mockError} 
-        resetErrorBoundary={mockResetErrorBoundary} 
-      />
+      <ErrorFallback
+        error={mockError}
+        resetErrorBoundary={mockResetErrorBoundary}
+      />,
     );
 
     // 再試行ボタンが表示されることを確認
@@ -41,10 +41,10 @@ describe("ErrorFallback", () => {
     const mockResetErrorBoundary = vi.fn();
 
     render(
-      <ErrorFallback 
-        error={mockError} 
-        resetErrorBoundary={mockResetErrorBoundary} 
-      />
+      <ErrorFallback
+        error={mockError}
+        resetErrorBoundary={mockResetErrorBoundary}
+      />,
     );
 
     // 再試行ボタンをクリック
@@ -60,10 +60,10 @@ describe("ErrorFallback", () => {
     const mockResetErrorBoundary = vi.fn();
 
     render(
-      <ErrorFallback 
-        error={mockError} 
-        resetErrorBoundary={mockResetErrorBoundary} 
-      />
+      <ErrorFallback
+        error={mockError}
+        resetErrorBoundary={mockResetErrorBoundary}
+      />,
     );
 
     // role="alert"が設定されることを確認
@@ -76,15 +76,20 @@ describe("ErrorFallback", () => {
     const mockResetErrorBoundary = vi.fn();
 
     render(
-      <ErrorFallback 
-        error={mockError} 
-        resetErrorBoundary={mockResetErrorBoundary} 
-      />
+      <ErrorFallback
+        error={mockError}
+        resetErrorBoundary={mockResetErrorBoundary}
+      />,
     );
 
     // preタグでエラーメッセージが表示されることを確認（改行を含むテキストを正しく検索）
     const preElement = screen.getByText((content, element) => {
-      return element?.tagName === "PRE" && content.includes("行1") && content.includes("行2") && content.includes("行3");
+      return (
+        element?.tagName === "PRE" &&
+        content.includes("行1") &&
+        content.includes("行2") &&
+        content.includes("行3")
+      );
     });
     expect(preElement.tagName).toBe("PRE");
   });
@@ -94,10 +99,10 @@ describe("ErrorFallback", () => {
     const mockResetErrorBoundary = vi.fn();
 
     render(
-      <ErrorFallback 
-        error={mockError} 
-        resetErrorBoundary={mockResetErrorBoundary} 
-      />
+      <ErrorFallback
+        error={mockError}
+        resetErrorBoundary={mockResetErrorBoundary}
+      />,
     );
 
     // 基本的な要素が表示されることを確認
