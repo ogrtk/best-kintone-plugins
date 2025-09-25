@@ -7,6 +7,9 @@ const __dirname = dirname(__filename);
 
 export default defineConfig({
   server: {
+    headers: {
+      "Content-Type": "application/javascript; charset=utf-8",
+    },
     https: {
       cert: fs.readFileSync(
         path.resolve(__dirname, "certificate/localhost.crt"),
