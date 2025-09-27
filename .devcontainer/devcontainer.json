@@ -5,7 +5,7 @@
 		"--env-file",
 		".devcontainer/.env"
 	],
-	"postCreateCommand": "pnpm install",
+	"postCreateCommand": "chmod +x ./.devcontainer/install-globals.sh && ./.devcontainer/install-globals.sh",
 	"workspaceFolder": "${localWorkspaceFolder}",
 	"customizations": {
 		"vscode": {
@@ -15,7 +15,9 @@
 				"ChakrounAnas.turbo-console-log",
 				"styled-components.vscode-styled-components",
 				"biomejs.biome",
-				"steoates.autoimport"
+				"steoates.autoimport",
+				"natqe.reload",
+				"Anthropic.claude-code"
 			]
 		}
 	}
