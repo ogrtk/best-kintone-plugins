@@ -2,40 +2,81 @@
   /***************************************
    * 設定項目　ここから
    ***************************************/
-  // アプリ内テーブルについては、kintoneAPIで要素取得ができないため、
-  // https://, http:// 以外のURLを指定しても、リンク表示ができません
-  // ※https://, http://　については、kintoneの挙動としてURLリンクになります。
 
+  /**
+   * リンク設定
+   * 配列内の各オブジェクトが1つのリンク設定を表します。
+   *
+   * ■ 設定オブジェクトの構造：
+   * {
+   *   linkField: {
+   *     type: "field" | "table",             // リンクを設置するフィールドタイプ
+   *     fieldCd: "フィールドコード",         // リンクを設置するフィールドのコード
+   *     tableCd: "テーブルコード"            // type="table"の場合のテーブルコード
+   *   },
+   *   baseUrl: "URLテンプレート",            // ${変数名}でプレースホルダーを指定
+   *   replacements: {                        // プレースホルダーの置換設定
+   *     変数名: {
+   *       type: "field" | "table" | "fixed", // 値の取得方法
+   *       fieldCd: "フィールドコード",       // type="field"|"table"の場合
+   *       value: "固定値"                    // type="fixed"の場合
+   *     }
+   *   },
+   *   style: "CSSスタイル"                   // リンクに適用するスタイル（省略可）
+   * }
+   *
+   * ■ 編集方法：
+   * 1. 新しいリンク設定を追加する場合：配列に新しいオブジェクトを追加
+   * 2. 既存の設定を変更する場合：該当オブジェクトのプロパティを編集
+   * 3. 設定を削除する場合：該当オブジェクトを配列から削除
+   * 4. フィールドコードは kintone アプリの設定画面で確認してください
+   *
+   * ■ 動作パターン：
+   * - type="field": 通常のフィールドにリンクを設定
+   * - type="table": テーブル内の各行にリンクを設定
+   * - replacements で URL 内の ${変数} を実際の値に置換
+   *
+   * ■注意
+   * アプリ内テーブルについては、
+   *   https://, http://
+   * 以外のURLを指定した場合、リンク表示ができません
+   * ※ kintoneAPIで要素取得ができないため、リンク要素設置に非対応
+   *    (保存時の編集には対応
+   *  　 https://, http://　については、kintone標準の挙動としてURLリンクになります)
+   */
   const LINK_CONFIGS = [
+    // 設定例1: 通常フィールドにGoogle Mapsリンクを設定
     {
       linkField: { type: "field", fieldCd: "GoogleMapsへのリンク" },
       baseUrl: "https://www.google.com/${path}${address}",
       replacements: {
-        path: { type: "fixed", value: "maps/place/" },
-        address: { type: "field", fieldCd: "住所" },
+        path: { type: "fixed", value: "maps/place/" }, // 固定値を設定
+        address: { type: "field", fieldCd: "住所" }, // 他フィールドの値を取得
       },
-      style: "color: red;",
+      style: "color: red;", // リンクを赤色で表示
     },
+    // 設定例2: 通常フィールドにファイルサーバリンクを設定
     {
       linkField: { type: "field", fieldCd: "ファイルサーバへのリンク" },
       baseUrl: "file://ebisu\\${ankenno}",
       replacements: {
-        ankenno: { type: "field", fieldCd: "案件番号" },
+        ankenno: { type: "field", fieldCd: "案件番号" }, // 案件番号フィールドの値を取得
       },
-      style: "color: blue;",
+      style: "color: blue;", // リンクを青色で表示
     },
+    // 設定例3: テーブル内フィールドにGoogle Mapsリンクを設定
     {
       linkField: {
         type: "table",
-        tableCd: "テーブル",
-        fieldCd: "明細Googleマップへのリンク",
+        tableCd: "テーブル", // テーブルのコード
+        fieldCd: "明細Googleマップへのリンク", // テーブル内のリンク設置フィールド
       },
       baseUrl: "https://www.google.com/maps/place/${city}${address}",
       replacements: {
-        city: { type: "field", fieldCd: "明細リンク固定値" },
-        address: { type: "table", fieldCd: "明細住所" },
+        city: { type: "field", fieldCd: "明細リンク固定値" }, // メインレコードのフィールド
+        address: { type: "table", fieldCd: "明細住所" }, // テーブル行のフィールド
       },
-      style: "color: green;",
+      style: "color: green;", // リンクを緑色で表示
     },
   ];
   /***************************************
