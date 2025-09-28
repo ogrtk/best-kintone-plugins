@@ -16,7 +16,7 @@
 | ------------------------------------------------------------------------- | ----------- | ------------------------ |----|
 | [**fbcust-memorise-input**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-memorise-input)                       | FormBridge | 入力値をブラウザに保持         |
 | [**fbcust-random-cd**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-random-cd)                       | FormBridge | ランダムコード値の生成         | [1.0.0](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Ffbcust-random-cd%401.0.0)
-| [**ktplug-construct-hyperlink**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-construct-hyperlink) | kintone  | リンク自動生成 | [1.0.2](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Fktplug-construct-hyperlink%401.0.2)
+| [**ktcust-construct-hyperlink**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktcust-construct-hyperlink) | kintone  | ハイパーリンク構築カスタマイズ |
 | [**ktplug-felica-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug--felica-reader) | kintone  | FeliCa 読取 | [0.8.7](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Fktplug-felica-reader%400.8.7)
 | [**ktplug-qrcode-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-qrcode-reader)               | kintone  | QRコード読取          |[0.8.2](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Fktplug-qrcode-reader%400.8.2)
 | [**kvcust-prefilled-formlink**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/kvcust-prefilled-formlink)               | kViewer/FormBridge  | 値設定済フォームへのリンク生成          |
@@ -60,7 +60,7 @@
     - 動作確認
       - プラグインのプロジェクトで`band`(build & deploy)を実行
         ```shell
-        pnpm run --filter ktplug-construct-hyperlink band
+        pnpm run --filter ktplug-qrcode-reader band
         ```
 
 #### プラグイン開発時のppk(秘密鍵)
