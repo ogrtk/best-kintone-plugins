@@ -49,58 +49,9 @@
     (event) => {
       console.log(event);
 
+      // リンク設置用項目を編集不可に
       for (const linkConfig of LINK_CONFIGS) {
-        switch (linkConfig.linkField.type) {
-          case "field": {
-            // リンク用フィールドを編集不可に
-            const linkField = event.record[linkConfig.linkField.fieldCd];
-            if (!linkField) {
-              const msg = `指定の項目がありません:${linkConfig.linkField.fieldCd}`;
-              alert(msg);
-              throw new Error(msg);
-            }
-
-            linkField.disabled = true;
-            break;
-          }
-          case "table": {
-            // テーブル内のリンク用フィールドを編集不可に
-            const tableCd = linkConfig.linkField.tableCd;
-            if (!tableCd) {
-              const msg = "linkConfig.linkField.tableCdが設定されていません。";
-              alert(msg);
-              throw new Error(msg);
-            }
-            const fieldCd = linkConfig.linkField.fieldCd;
-            if (!fieldCd) {
-              const msg = "linkConfig.linkField.fieldCdが設定されていません。";
-              alert(msg);
-              throw new Error(msg);
-            }
-            const tableData = event.record[linkConfig.linkField.tableCd];
-            if (!tableData || tableData.type !== "SUBTABLE") {
-              const msg = `テーブル"${linkConfig.linkField.tableCd}"がアプリに定義されていません。`;
-              alert(msg);
-              throw new Error(msg);
-            }
-            // テーブルの各行を設定
-            for (const tableRecord of tableData.value) {
-              const linkField = tableRecord.value[linkConfig.linkField.fieldCd];
-              if (!linkField) {
-                const msg = `テーブル"${linkConfig.linkField.tableCd}"に項目"${linkConfig.linkField.fieldCd}"が定義されていません。`;
-                alert(msg);
-                throw new Error(msg);
-              }
-              linkField.disabled = true; // 編集不可
-            }
-            break;
-          }
-          default: {
-            const msg = `linkConfig.linkField.typeの設定が不正です:${linkConfig.linkField.type}`;
-            alert(msg);
-            throw new Error(msg);
-          }
-        }
+        disableLinkFields(event.record, linkConfig);
       }
       return event;
     },
@@ -118,137 +69,55 @@
     (event) => {
       console.log(event);
 
+      // リンク設置用項目にURLを生成・設定
       for (const linkConfig of LINK_CONFIGS) {
-        // typeに応じてリンクの文字列構成・設定
         switch (linkConfig.linkField.type) {
           case "field": {
-            // 文字パラメータを用意
-            const keys = Object.keys(linkConfig.replacements);
-            const replacementStrings = {};
-            for (const key of keys) {
-              switch (linkConfig.replacements[key].type) {
-                case "field": {
-                  const field =
-                    event.record[linkConfig.replacements[key].fieldCd];
-                  if (!field) {
-                    const msg = `指定の項目がありません:${linkConfig.replacements[key].fieldCd}`;
-                    alert(msg);
-                    throw new Error(msg);
-                  }
-                  replacementStrings[key] = field.value;
-                  break;
-                }
-                case "fixed":
-                  replacementStrings[key] = linkConfig.replacements[key].value;
-                  break;
-
-                default: {
-                  const errMsg = `設定が不正です: replacements.${key}.type が ${linkConfig.replacements[key].type}`;
-                  alert(errMsg);
-                  throw new Error(errMsg);
-                }
-              }
-            }
-
-            // リンクのURLを構成
+            // フィールドタイプの場合：置換文字列を構築してリンクURLを生成
+            const replacementStrings = buildReplacementStrings(
+              linkConfig.replacements,
+              event.record,
+            );
             const linkUrl = encodeURI(
               replaceString(linkConfig.baseUrl, replacementStrings),
             );
-
-            // 指定フィールドにリンクを設定
-            const linkField = event.record[linkConfig.linkField.fieldCd];
-            if (!linkField) {
-              const msg = `指定の項目がありません:${linkConfig.linkField.fieldCd}`;
-              alert(msg);
-              throw new Error(msg);
-            }
-            linkField.value = linkUrl; // 項目の値として設定
+            const linkField = validateField(
+              event.record,
+              linkConfig.linkField.fieldCd,
+              "linkConfig.linkField.fieldCd",
+            );
+            linkField.value = linkUrl;
             break;
           }
           case "table": {
-            // tableの場合
-            const tableCd = linkConfig.linkField.tableCd;
-            if (!tableCd) {
-              const msg = "linkConfig.linkField.tableCdが設定されていません。";
-              alert(msg);
-              throw new Error(msg);
-            }
-            const fieldCd = linkConfig.linkField.fieldCd;
-            if (!fieldCd) {
-              const msg = "linkConfig.linkField.fieldCdが設定されていません。";
-              alert(msg);
-              throw new Error(msg);
-            }
-            const tableData = event.record[linkConfig.linkField.tableCd];
-            if (!tableData || tableData.type !== "SUBTABLE") {
-              const msg = `テーブル"${linkConfig.linkField.tableCd}"がアプリに定義されていません。`;
-              alert(msg);
-              throw new Error(msg);
-            }
-
-            // テーブルの各行を設定
+            // テーブルタイプの場合：各行に対してリンクURLを生成
+            const tableData = validateTable(
+              event.record,
+              linkConfig.linkField.tableCd,
+            );
             for (const tableRecord of tableData.value) {
-              // 文字パラメータを用意
-              const keys = Object.keys(linkConfig.replacements);
-              const replacementStrings = {};
-              for (const key of keys) {
-                switch (linkConfig.replacements[key].type) {
-                  case "table": {
-                    const field =
-                      tableRecord.value[linkConfig.replacements[key].fieldCd];
-                    if (!field) {
-                      const msg = `指定の項目がありません:${linkConfig.replacements[key].fieldCd}`;
-                      alert(msg);
-                      throw new Error(msg);
-                    }
-                    replacementStrings[key] = field.value;
-                    break;
-                  }
-                  case "field": {
-                    const field =
-                      event.record[linkConfig.replacements[key].fieldCd];
-                    if (!field) {
-                      const msg = `指定の項目がありません:${linkConfig.replacements[key].fieldCd}`;
-                      alert(msg);
-                      throw new Error(msg);
-                    }
-                    replacementStrings[key] = field.value;
-                    break;
-                  }
-                  case "fixed":
-                    replacementStrings[key] =
-                      linkConfig.replacements[key].value;
-                    break;
-
-                  default: {
-                    const errMsg = `設定が不正です: replacements.${key}.type が ${linkConfig.replacements[key].type}`;
-                    alert(errMsg);
-                    throw new Error(errMsg);
-                  }
-                }
-              }
-
-              // リンクのURLを構成
+              // テーブル行とメインレコードの両方を使用して置換文字列を構築
+              const replacementStrings = buildReplacementStrings(
+                linkConfig.replacements,
+                event.record,
+                tableRecord,
+              );
               const linkUrl = encodeURI(
                 replaceString(linkConfig.baseUrl, replacementStrings),
               );
-
-              // 指定フィールドにリンクを設定
-              const linkField = tableRecord.value[linkConfig.linkField.fieldCd];
-              if (!linkField) {
-                const msg = `テーブル"${linkConfig.linkField.tableCd}"に項目"${linkConfig.linkField.fieldCd}"が定義されていません。`;
-                alert(msg);
-                throw new Error(msg);
-              }
-              linkField.value = linkUrl; // 項目の値として設定
+              const linkField = validateField(
+                tableRecord.value,
+                linkConfig.linkField.fieldCd,
+                `テーブル:${linkConfig.linkField.tableCd}`,
+              );
+              linkField.value = linkUrl;
             }
             break;
           }
-          default: {
-            const msg = `linkConfig.linkField.typeの設定が不正です:${linkConfig.linkField.type}`;
-            alert(msg);
-            throw new Error(msg);
-          }
+          default:
+            handleError(
+              `linkConfig.linkField.typeの設定が不正です:${linkConfig.linkField.type}`,
+            );
         }
       }
       return event;
@@ -261,18 +130,23 @@
   kintone.events.on(["app.record.detail.show"], (event) => {
     console.log(event);
 
+    // 詳細画面でリンク要素にクリックイベントとスタイルを設定
     for (const linkConfig of LINK_CONFIGS) {
       switch (linkConfig.linkField.type) {
         case "field": {
-          // 指定フィールドにリンクを設定
-          const linkField = event.record[linkConfig.linkField.fieldCd];
+          // フィールドタイプの場合：DOM要素を取得してリンク設定
+          const linkField = validateField(
+            event.record,
+            linkConfig.linkField.fieldCd,
+            "linkConfig.linkField.fieldCd",
+          );
           const linkEl = kintone.app.record.getFieldElement(
             linkConfig.linkField.fieldCd,
           );
-          if (!linkField || !linkEl) {
-            const msg = `指定の項目がありません:${linkConfig.linkField.fieldCd}`;
-            alert(msg);
-            throw new Error(msg);
+          if (!linkEl) {
+            handleError(
+              `指定の項目の要素が取得できません:${linkConfig.linkField.fieldCd}`,
+            );
           }
           setLinkElement(linkEl, linkConfig.style, linkField.value);
           break;
@@ -281,11 +155,10 @@
           // テーブルの場合、何もしない
           break;
         }
-        default: {
-          const msg = `linkConfig.linkField.typeの設定が不正です:${linkConfig.linkField.type}`;
-          alert(msg);
-          throw new Error(msg);
-        }
+        default:
+          handleError(
+            `linkConfig.linkField.typeの設定が不正です:${linkConfig.linkField.type}`,
+          );
       }
     }
     return event;
@@ -300,19 +173,21 @@
     // 一覧表示以外は処理しない
     if (event.viewType !== "list") return;
 
+    // 一覧画面の各行にリンク設定を適用
     for (const linkConfig of LINK_CONFIGS) {
       switch (linkConfig.linkField.type) {
         case "field": {
-          // 指定項目の要素の配列を取得
+          // フィールドタイプの場合：一覧の各行のDOM要素を取得
           const linkEls = kintone.app.getFieldElements(
             linkConfig.linkField.fieldCd,
           );
           if (!linkEls || linkEls.length === 0) {
-            const msg = `指定の項目がありません:${linkConfig.linkField.fieldCd}`;
-            console.warn(msg);
+            console.warn(
+              `指定の項目がありません:${linkConfig.linkField.fieldCd}`,
+            );
             continue;
           }
-          // 行ごとにデータを確認し、対応する要素にリンクを設定
+          // 各レコードに対応するDOM要素にリンク設定
           for (const [idx, record] of event.records.entries()) {
             const linkField = record[linkConfig.linkField.fieldCd];
             if (linkField.value) {
@@ -326,11 +201,10 @@
           // テーブルの場合、何もしない
           break;
         }
-        default: {
-          const msg = `linkConfig.linkField.typeの設定が不正です:${linkConfig.linkField.type}`;
-          alert(msg);
-          throw new Error(msg);
-        }
+        default:
+          handleError(
+            `linkConfig.linkField.typeの設定が不正です:${linkConfig.linkField.type}`,
+          );
       }
     }
     return event;
@@ -342,13 +216,13 @@
   kintone.events.on(["app.record.index.edit.show"], (event) => {
     console.log(event);
 
-    // リンク設定用要素を編集不可に設定
+    // 一覧編集開始時：リンクフィールドを編集不可に設定
     for (const linkConfig of LINK_CONFIGS) {
       switch (linkConfig.linkField.type) {
         case "field": {
-          const linkField = event.record[linkConfig.linkField];
+          const linkField = event.record[linkConfig.linkField.fieldCd];
           if (linkField) {
-            linkField.disabled = true; // 編集不可
+            linkField.disabled = true;
           }
           break;
         }
@@ -356,15 +230,139 @@
           // テーブルの場合、何もしない
           break;
         }
-        default: {
-          const msg = `linkConfig.linkField.typeの設定が不正です:${linkConfig.linkField.type}`;
-          alert(msg);
-          throw new Error(msg);
-        }
+        default:
+          handleError(
+            `linkConfig.linkField.typeの設定が不正です:${linkConfig.linkField.type}`,
+          );
       }
     }
     return event;
   });
+
+  /**
+   * エラーハンドリング
+   */
+  function handleError(message) {
+    alert(message);
+    throw new Error(message);
+  }
+
+  /**
+   * フィールドの存在チェック
+   */
+  function validateField(record, fieldCd, errorComment = null) {
+    // フィールドコードの必須チェック
+    if (!fieldCd) {
+      handleError(`フィールドコードが指定されていません。${errorComment}`);
+    }
+
+    // レコード内でのフィールド存在チェック
+    const field = record[fieldCd];
+    if (!field) {
+      handleError(`指定の項目がありません:${fieldCd}。${errorComment}`);
+    }
+    return field;
+  }
+
+  /**
+   * テーブルの存在チェック
+   */
+  function validateTable(record, tableCd) {
+    // テーブルコードの必須チェック
+    if (!tableCd) {
+      handleError("linkConfig.linkField.tableCdが設定されていません。");
+    }
+
+    // テーブルの存在チェックとタイプ確認
+    const tableData = record[tableCd];
+    if (!tableData || tableData.type !== "SUBTABLE") {
+      handleError(`テーブル"${tableCd}"がアプリに定義されていません。`);
+    }
+    return tableData;
+  }
+
+  /**
+   * リプレースメント文字列の構築
+   */
+  function buildReplacementStrings(replacements, record, tableRecord = null) {
+    // リプレースメント文字列のオブジェクトを用意
+    const replacementStrings = {};
+
+    // 各置換パラメータの値を取得してオブジェクトを構築
+    const keys = Object.keys(replacements);
+    for (const key of keys) {
+      const replacement = replacements[key];
+      switch (replacement.type) {
+        case "field": {
+          // メインレコードのフィールドから値を取得
+          const field = validateField(
+            record,
+            replacement.fieldCd,
+            `replacements.${key}`,
+          );
+          replacementStrings[key] = field.value;
+          break;
+        }
+        case "table": {
+          // テーブル行のフィールドから値を取得
+          if (!tableRecord) {
+            handleError("テーブルレコードが指定されていません。");
+          }
+          const field = validateField(
+            tableRecord.value,
+            replacement.fieldCd,
+            `replacements.${key}（テーブル内）`,
+          );
+          replacementStrings[key] = field.value;
+          break;
+        }
+        case "fixed":
+          // 固定値を設定
+          replacementStrings[key] = replacement.value;
+          break;
+        default:
+          handleError(
+            `設定が不正です: replacements.${key}.type が ${replacement.type}`,
+          );
+      }
+    }
+    return replacementStrings;
+  }
+
+  /**
+   * リンクフィールドを無効化
+   */
+  function disableLinkFields(record, linkConfig) {
+    switch (linkConfig.linkField.type) {
+      case "field": {
+        // フィールドタイプの場合：該当フィールドを編集不可に設定
+        const linkField = validateField(
+          record,
+          linkConfig.linkField.fieldCd,
+          "linkConfig.linkField.fieldCd",
+        );
+        linkField.disabled = true;
+        break;
+      }
+      case "table": {
+        // テーブルタイプの場合：テーブル内の全行のリンクフィールドを編集不可に設定
+        const tableData = validateTable(record, linkConfig.linkField.tableCd);
+        for (const tableRecord of tableData.value) {
+          const linkField = validateField(
+            tableRecord.value,
+            linkConfig.linkField.fieldCd,
+            `テーブル ${linkConfig.linkField.tableCd}`,
+          );
+          linkField.disabled = true;
+        }
+        break;
+      }
+      default:
+        handleError(
+          `linkConfig.linkField.typeの設定が不正です:${linkConfig.linkField.type}`,
+        );
+    }
+  }
 
   /**
    * １行テキスト項目内で、実際に文字を配置している要素を取得
@@ -383,16 +381,16 @@
    */
   function setLinkElement(linkEl, styleCssText, linkParamValue) {
     if (linkParamValue) {
-      // スタイル設定
+      // CSSスタイルの適用
       if (styleCssText) {
         const stylingEl = findStylingElement(linkEl);
         if (stylingEl) stylingEl.style.cssText = styleCssText;
       }
-      // リンクを設定
+      // クリックイベント：新しいタブでリンクを開く
       linkEl.addEventListener("click", () => {
         window.open(linkParamValue, "_blank");
       });
-      // マウスオーバー時のアイコン設定
+      // マウスオーバー時：カーソルをポインターに変更
       linkEl.addEventListener("mouseover", () => {
         linkEl.style.cursor = "pointer";
       });
@@ -403,6 +401,7 @@
    * 文字列の差込処理
    */
   function replaceString(template, variables) {
+    // テンプレート文字列内の${key}形式のプレースホルダーを実際の値で置換
     return template.replace(/\$\{([^}]+)\}/g, (match, key) => {
       return variables[key.trim()] || match;
     });
