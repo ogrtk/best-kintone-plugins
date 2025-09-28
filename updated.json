@@ -3,23 +3,23 @@
     {
       "releases": [
         {
-          "name": "@ogrtk/ktplug-qrcode-reader",
-          "type": "patch"
+          "name": "@ogrtk/ktcust-construct-hyperlink",
+          "type": "major"
         }
       ],
-      "summary": "strucure renewed",
-      "id": "little-sites-shine"
+      "summary": "1st release",
+      "id": "mean-lions-fry"
     }
   ],
   "releases": [
     {
-      "name": "@ogrtk/ktplug-qrcode-reader",
-      "type": "patch",
-      "oldVersion": "0.8.1",
+      "name": "@ogrtk/ktcust-construct-hyperlink",
+      "type": "major",
+      "oldVersion": "1.0.0",
       "changesets": [
-        "little-sites-shine"
+        "mean-lions-fry"
       ],
-      "newVersion": "0.8.2"
+      "newVersion": "2.0.0"
     }
   ]
 }
