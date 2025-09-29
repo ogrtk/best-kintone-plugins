@@ -18,5 +18,6 @@ export default defineConfig({
         path.resolve(__dirname, "certificate/localhost.key"),
       ),
     },
+    host: true, // Enable external access
   },
 });
