@@ -148,15 +148,21 @@ async function updateReadme(): Promise<void> {
     const packageTable = await generatePackageTable(validPackages);
 
     // READMEの該当部分を置換
-    const tableStartMarker =
-      "| project                                                                   | 対象          | 説明                       |artifact|";
+    const tableStartMarker = "| project | 対象 | 説明 | artifact |";
     const tableEndMarker = "各プロジェクトの詳細については";
 
     const startIndex = currentReadme.indexOf(tableStartMarker);
     const endIndex = currentReadme.indexOf(tableEndMarker);
 
     if (startIndex === -1 || endIndex === -1) {
-      throw new Error("Could not find table markers in README");
+      console.error("❌ Table markers not found:");
+      console.error(`Start marker found: ${startIndex !== -1}`);
+      console.error(`End marker found: ${endIndex !== -1}`);
+      console.error("README content snippet:");
+      console.error(currentReadme.substring(0, 500));
+      throw new Error(
+        `Could not find table markers in README. Start: ${startIndex}, End: ${endIndex}`,
+      );
     }
 
     const beforeTable = currentReadme.substring(0, startIndex);
