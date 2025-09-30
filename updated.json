@@ -7,19 +7,19 @@
           "type": "major"
         }
       ],
-      "summary": "1st release",
-      "id": "mean-lions-fry"
+      "summary": "1st",
+      "id": "late-wings-agree"
     }
   ],
   "releases": [
     {
       "name": "@ogrtk/ktcust-construct-hyperlink",
       "type": "major",
-      "oldVersion": "1.0.0",
+      "oldVersion": "0.1.0",
       "changesets": [
-        "mean-lions-fry"
+        "late-wings-agree"
       ],
-      "newVersion": "2.0.0"
+      "newVersion": "1.0.0"
     }
   ]
 }
