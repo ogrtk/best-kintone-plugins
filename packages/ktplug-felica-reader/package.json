@@ -17,7 +17,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "FeliCa読取プラグイン",
   "devDependencies": {
     "@kintone/dts-gen": "^8.1.1",
     "@types/node": "^22.10.2",
