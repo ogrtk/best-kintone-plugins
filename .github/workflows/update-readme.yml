@@ -71,7 +71,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git push origin HEAD:auto-update-readme-${{ github.event.number }}
+          git push origin HEAD:refs/heads/auto-update-readme-${{ github.event.number }}
           gh pr create \
             --base ${{ github.head_ref || github.ref_name }} \
             --head auto-update-readme-${{ github.event.number }} \
