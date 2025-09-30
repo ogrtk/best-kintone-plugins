@@ -3,23 +3,49 @@
     {
       "releases": [
         {
-          "name": "@ogrtk/ktcust-construct-hyperlink",
-          "type": "major"
+          "name": "@ogrtk/kvcust-prefilled-formlink",
+          "type": "minor"
+        },
+        {
+          "name": "@ogrtk/kvcust-show-lastupdate",
+          "type": "minor"
+        },
+        {
+          "name": "@ogrtk/fbcust-memorise-input",
+          "type": "minor"
         }
       ],
-      "summary": "1st",
-      "id": "late-wings-agree"
+      "summary": "release 0.9",
+      "id": "kind-oranges-sleep"
     }
   ],
   "releases": [
     {
-      "name": "@ogrtk/ktcust-construct-hyperlink",
-      "type": "major",
-      "oldVersion": "0.1.0",
+      "name": "@ogrtk/kvcust-prefilled-formlink",
+      "type": "minor",
+      "oldVersion": "0.8.0",
       "changesets": [
-        "late-wings-agree"
+        "kind-oranges-sleep"
       ],
-      "newVersion": "1.0.0"
+      "newVersion": "0.9.0"
+    },
+    {
+      "name": "@ogrtk/kvcust-show-lastupdate",
+      "type": "minor",
+      "oldVersion": "0.8.0",
+      "changesets": [
+        "kind-oranges-sleep"
+      ],
+      "newVersion": "0.9.0"
+    },
+    {
+      "name": "@ogrtk/fbcust-memorise-input",
+      "type": "minor",
+      "oldVersion": "0.8.0",
+      "changesets": [
+        "kind-oranges-sleep"
+      ],
+      "newVersion": "0.9.0"
     }
   ]
 }
