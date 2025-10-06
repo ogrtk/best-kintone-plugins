@@ -41,8 +41,6 @@
   for (const targetEvent of SAVE_TARGET_EVENTS) {
     // 対象イベントすべてに処理を設定
     formBridge.events.on(targetEvent, (context) => {
-      console.log(context.getRecord().質疑.value);
-
       // 保存する設定をユーザが選択していない場合、保存データを消去して終了
       if (
         !context
