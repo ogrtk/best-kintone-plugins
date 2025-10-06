@@ -51,7 +51,7 @@
     // 設定例2: 通常フィールドにファイルサーバリンクを設定
     {
       linkField: { type: "field", fieldCd: "ファイルサーバへのリンク" },
-      baseUrl: "file://ebisu\\${ankenno}",
+      baseUrl: "file://ebisu\\ankendir\\${ankenno}",
       replacements: {
         ankenno: { type: "field", fieldCd: "案件番号" }, // 案件番号フィールドの値を取得
       },
