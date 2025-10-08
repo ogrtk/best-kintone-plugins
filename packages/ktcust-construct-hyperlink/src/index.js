@@ -17,9 +17,9 @@
    *   baseUrl: "URLテンプレート",            // ${変数名}でプレースホルダーを指定
    *   replacements: {                        // プレースホルダーの置換設定
    *     変数名: {
-   *       type: "field" | "table" | "fixed", // 値の取得方法
-   *       fieldCd: "フィールドコード",       // type="field"|"table"の場合
-   *       value: "固定値"                    // type="fixed"の場合
+   *       type: "field" | "table",           // 値の取得方法
+   *       fieldCd: "フィールドコード",       // フィールドコード
+   *       skipIfEmpty: true | false          // この項目が空の場合リンク設置をスキップ（省略可、デフォルト:false）
    *     }
    *   },
    *   style: "CSSスタイル"                   // リンクに適用するスタイル（省略可）
@@ -29,6 +29,8 @@
    * - type="field": 通常のフィールドにリンクを設定
    * - type="table": テーブル項目（各行）にリンクを設定
    * - replacements で URL 内の ${変数} を実際の値に置換
+   * - skipIfEmpty=true の項目が空の場合、リンク設置をスキップ
+   * - skipIfEmpty=false または未指定の項目が空の場合、空文字で置換してリンク設置
    * ※テーブル項目にリンクを設定時、プレースホルダーの置換設定でテーブルの項目を指定する場合は、同じテーブルの項目のみ指定可能
    *
    * ■ 注意：
@@ -40,11 +42,14 @@
   const LINK_CONFIGS = [
     // 設定例1: 通常フィールドにGoogle Mapsリンクを設定
     {
-      linkField: { type: "field", fieldCd: "GoogleMapsへのリンク" },
-      baseUrl: "https://www.google.com/${path}${address}",
+      linkField: { type: "field", fieldCd: "GoogleMapsへのリンク" }, // GoogleMapsへのリンク項目にURLを設定する
+      baseUrl: "https://www.google.com/maps/place/${address}", // ${address}部分には、replacementsのaddresで指定する値が差し込まれる
       replacements: {
-        path: { type: "fixed", value: "maps/place/" }, // 固定値を設定
-        address: { type: "field", fieldCd: "住所" }, // 他フィールドの値を取得
+        address: {
+          type: "field",
+          fieldCd: "住所",
+          skipIfEmpty: true, // 住所が空の場合はリンクを設定しない
+        },
       },
       style: "color: red;", // リンクを赤色で表示
     },
@@ -53,7 +58,11 @@
       linkField: { type: "field", fieldCd: "ファイルサーバへのリンク" },
       baseUrl: "file://ebisu\\ankendir\\${ankenno}",
       replacements: {
-        ankenno: { type: "field", fieldCd: "案件番号" }, // 案件番号フィールドの値を取得
+        ankenno: {
+          type: "field",
+          fieldCd: "案件番号",
+          skipIfEmpty: true, // 案件番号が空の場合はリンクを設定しない
+        },
       },
       style: "color: blue;", // リンクを青色で表示
     },
@@ -66,8 +75,16 @@
       },
       baseUrl: "https://www.google.com/maps/place/${city}${address}",
       replacements: {
-        city: { type: "field", fieldCd: "明細リンク固定値" }, // メインレコードのフィールド
-        address: { type: "table", fieldCd: "明細住所" }, // テーブル行のフィールド
+        city: {
+          type: "field",
+          fieldCd: "明細リンク固定値",
+          skipIfEmpty: true, // 空でも空文字で置換
+        },
+        address: {
+          type: "table",
+          fieldCd: "明細住所",
+          skipIfEmpty: false, // 明細住所が空の場合はリンクを設定しない
+        },
       },
       style: "color: green;", // リンクを緑色で表示
     },
@@ -92,6 +109,28 @@
   );
 
   /**
+   * テーブル　明細行追加時
+   */
+  // 設定で指定されたテーブルすべてを対象にイベントリスナを設定
+  for (const linkConfig of LINK_CONFIGS) {
+    if (linkConfig.linkField.type === "table") {
+      const tableCd = linkConfig.linkField.tableCd;
+      kintone.events.on(
+        [
+          `app.record.edit.change.${tableCd}`,
+          `app.record.create.change.${tableCd}`,
+        ],
+        (event) => {
+          console.log(event);
+          // テーブル内各行のリンクフィールドを編集不可に設定
+          disableLinkFields(event.record, linkConfig);
+          return event;
+        },
+      );
+    }
+  }
+
+  /**
    * 登録・更新・一覧画面　保存時
    */
   kintone.events.on(
@@ -100,22 +139,29 @@
       "app.record.edit.submit",
       "app.record.index.edit.submit",
     ],
+    // リンク設置用項目にURLを生成・設定
     (event) => {
       console.log(event);
 
-      // リンク設置用項目にURLを生成・設定
+      // 設定を一つずつ処理
       for (const linkConfig of LINK_CONFIGS) {
         switch (linkConfig.linkField.type) {
           case "field": {
+            //
             // フィールドタイプの場合：置換文字列を構築してリンクURLを生成
+            //
             const replacementStrings = buildReplacementStrings(
               linkConfig.replacements,
               event.record,
             );
+            // skipIfEmpty項目が空の場合はスキップ
+            if (replacementStrings === null) {
+              break;
+            }
             const linkUrl = encodeURI(
               replaceString(linkConfig.baseUrl, replacementStrings),
             );
-            const linkField = validateField(
+            const linkField = getFieldData(
               event.record,
               linkConfig.linkField.fieldCd,
               "linkConfig.linkField.fieldCd",
@@ -124,8 +170,10 @@
             break;
           }
           case "table": {
+            //
             // テーブルタイプの場合：各行に対してリンクURLを生成
-            const tableData = validateTable(
+            //
+            const tableData = getTableData(
               event.record,
               linkConfig.linkField.tableCd,
             );
@@ -136,19 +184,28 @@
                 event.record,
                 tableRecord,
               );
-              const linkUrl = encodeURI(
-                replaceString(linkConfig.baseUrl, replacementStrings),
-              );
-              const linkField = validateField(
+              const linkField = getFieldData(
                 tableRecord.value,
                 linkConfig.linkField.fieldCd,
                 `テーブル:${linkConfig.linkField.tableCd}`,
               );
-              linkField.value = linkUrl;
+
+              // skipIfEmptyがtrueで空値がある場合はクリア
+              if (replacementStrings === null) {
+                linkField.value = "";
+              } else {
+                const linkUrl = encodeURI(
+                  replaceString(linkConfig.baseUrl, replacementStrings),
+                );
+                linkField.value = linkUrl;
+              }
             }
             break;
           }
           default:
+            //
+            // それ以外が設定された場合はエラーとする
+            //
             handleError(
               `linkConfig.linkField.typeの設定が不正です:${linkConfig.linkField.type}`,
             );
@@ -161,88 +218,120 @@
   /**
    * 詳細画面　表示時
    */
-  kintone.events.on(["app.record.detail.show"], (event) => {
-    console.log(event);
-
+  kintone.events.on(
+    ["app.record.detail.show"],
     // 詳細画面でリンク要素にクリックイベントとスタイルを設定
-    for (const linkConfig of LINK_CONFIGS) {
-      switch (linkConfig.linkField.type) {
-        case "field": {
-          // フィールドタイプの場合：DOM要素を取得してリンク設定
-          const linkField = validateField(
-            event.record,
-            linkConfig.linkField.fieldCd,
-            "linkConfig.linkField.fieldCd",
-          );
-          const linkEl = kintone.app.record.getFieldElement(
-            linkConfig.linkField.fieldCd,
-          );
-          if (!linkEl) {
-            handleError(
-              `指定の項目の要素が取得できません:${linkConfig.linkField.fieldCd}`,
+    (event) => {
+      console.log(event);
+
+      // 設定を一つずつ処理
+      for (const linkConfig of LINK_CONFIGS) {
+        switch (linkConfig.linkField.type) {
+          case "field": {
+            //
+            // フィールドタイプの場合：DOM要素を取得してリンク設定
+            //
+
+            // 項目のデータを取得
+            const linkField = getFieldData(
+              event.record,
+              linkConfig.linkField.fieldCd,
+              "linkConfig.linkField.fieldCd",
             );
+            // 項目のHTML要素を取得
+            const linkEl = kintone.app.record.getFieldElement(
+              linkConfig.linkField.fieldCd,
+            );
+            if (!linkEl) {
+              handleError(
+                `指定の項目の要素が取得できません:${linkConfig.linkField.fieldCd}`,
+              );
+            }
+            // 取得したHTML要素をリンクとして設定
+            setLinkElement(linkEl, linkConfig.style, linkField.value);
+            break;
           }
-          setLinkElement(linkEl, linkConfig.style, linkField.value);
-          break;
+          case "table": {
+            //
+            // テーブルの場合は何もしない(冒頭の説明参照)
+            //
+            break;
+          }
+          default:
+            //
+            // それ以外が設定された場合はエラーとする
+            //
+            handleError(
+              `linkConfig.linkField.typeの設定が不正です:${linkConfig.linkField.type}`,
+            );
         }
-        case "table": {
-          // テーブルの場合、何もしない
-          break;
-        }
-        default:
-          handleError(
-            `linkConfig.linkField.typeの設定が不正です:${linkConfig.linkField.type}`,
-          );
       }
-    }
-    return event;
-  });
+      return event;
+    },
+  );
 
   /**
    * 一覧画面　表示時
    */
-  kintone.events.on(["app.record.index.show"], (event) => {
-    console.log(event);
-
-    // 一覧表示以外は処理しない
-    if (event.viewType !== "list") return;
-
+  kintone.events.on(
+    ["app.record.index.show"],
     // 一覧画面の各行にリンク設定を適用
-    for (const linkConfig of LINK_CONFIGS) {
-      switch (linkConfig.linkField.type) {
-        case "field": {
-          // フィールドタイプの場合：一覧の各行のDOM要素を取得
-          const linkEls = kintone.app.getFieldElements(
-            linkConfig.linkField.fieldCd,
-          );
-          if (!linkEls || linkEls.length === 0) {
-            console.warn(
-              `指定の項目がありません:${linkConfig.linkField.fieldCd}`,
+    (event) => {
+      console.log(event);
+
+      // 一覧表示以外は処理しない
+      if (event.viewType !== "list") return;
+
+      // 設定を一つずつ処理
+      for (const linkConfig of LINK_CONFIGS) {
+        switch (linkConfig.linkField.type) {
+          case "field": {
+            //
+            // フィールドタイプの場合：一覧の各行のHTML要素を取得
+            //
+
+            // HTML要素を取得(一覧の列。各行の項目が含まれる)
+            const linkEls = kintone.app.getFieldElements(
+              linkConfig.linkField.fieldCd,
             );
-            continue;
-          }
-          // 各レコードに対応するDOM要素にリンク設定
-          for (const [idx, record] of event.records.entries()) {
-            const linkField = record[linkConfig.linkField.fieldCd];
-            if (linkField.value) {
-              const linkEl = linkEls[idx];
-              setLinkElement(linkEl, linkConfig.style, linkField.value);
+            if (!linkEls || linkEls.length === 0) {
+              console.warn(
+                `指定の項目がありません:${linkConfig.linkField.fieldCd}`,
+              );
+              continue;
             }
+            // 各レコードに対応するHTML要素にリンク設定
+            for (const [idx, record] of event.records.entries()) {
+              const linkField = getFieldData(
+                record,
+                linkConfig.linkField.fieldCd,
+                "linkConfig.linkField.fieldCd",
+              );
+              if (linkField.value) {
+                const linkEl = linkEls[idx];
+                setLinkElement(linkEl, linkConfig.style, linkField.value);
+              }
+            }
+            break;
           }
-          break;
+          case "table": {
+            //
+            // テーブルの場合、何もしない
+            //
+            break;
+          }
+          default:
+            //
+            // それ以外が設定された場合はエラーとする
+            //
+            handleError(
+              `linkConfig.linkField.typeの設定が不正です:${linkConfig.linkField.type}`,
+            );
         }
-        case "table": {
-          // テーブルの場合、何もしない
-          break;
-        }
-        default:
-          handleError(
-            `linkConfig.linkField.typeの設定が不正です:${linkConfig.linkField.type}`,
-          );
       }
-    }
-    return event;
-  });
+      return event;
+    },
+  );
 
   /**
    * 一覧画面　編集開始時
@@ -282,9 +371,9 @@
   }
 
   /**
-   * フィールドの存在チェック
+   * フィールドのデータ取得
    */
-  function validateField(record, fieldCd, errorComment = null) {
+  function getFieldData(record, fieldCd, errorComment = null) {
     // フィールドコードの必須チェック
     if (!fieldCd) {
       handleError(`フィールドコードが指定されていません。${errorComment}`);
@@ -299,9 +388,9 @@
   }
 
   /**
-   * テーブルの存在チェック
+   * テーブルのデータ取得
    */
-  function validateTable(record, tableCd) {
+  function getTableData(record, tableCd) {
     // テーブルコードの必須チェック
     if (!tableCd) {
       handleError("linkConfig.linkField.tableCdが設定されていません。");
@@ -317,6 +406,10 @@
 
   /**
    * リプレースメント文字列の構築
+   * @param {Object} replacements - 置換設定オブジェクト
+   * @param {Object} record - メインレコード
+   * @param {Object} tableRecord - テーブルレコード（オプション）
+   * @returns {Object|null} - 置換文字列オブジェクト、またはskipIfEmpty項目が空の場合はnull
    */
   function buildReplacementStrings(replacements, record, tableRecord = null) {
     // リプレースメント文字列のオブジェクトを用意
@@ -329,12 +422,16 @@
       switch (replacement.type) {
         case "field": {
           // メインレコードのフィールドから値を取得
-          const field = validateField(
+          const field = getFieldData(
             record,
             replacement.fieldCd,
             `replacements.${key}`,
           );
-          replacementStrings[key] = field.value;
+          // skipIfEmptyがtrueで値が空の場合はnullを返す
+          if (replacement.skipIfEmpty && !field.value) {
+            return null;
+          }
+          replacementStrings[key] = field.value || "";
           break;
         }
         case "table": {
@@ -342,24 +439,25 @@
           if (!tableRecord) {
             handleError("テーブルレコードが指定されていません。");
           }
-          const field = validateField(
+          const field = getFieldData(
             tableRecord.value,
             replacement.fieldCd,
             `replacements.${key}（テーブル内）`,
           );
-          replacementStrings[key] = field.value;
+          // skipIfEmptyがtrueで値が空の場合はnullを返す
+          if (replacement.skipIfEmpty && !field.value) {
+            return null;
+          }
+          replacementStrings[key] = field.value || "";
           break;
         }
-        case "fixed":
-          // 固定値を設定
-          replacementStrings[key] = replacement.value;
-          break;
         default:
           handleError(
             `設定が不正です: replacements.${key}.type が ${replacement.type}`,
           );
       }
     }
+
     return replacementStrings;
   }
 
@@ -370,7 +468,7 @@
     switch (linkConfig.linkField.type) {
       case "field": {
         // フィールドタイプの場合：該当フィールドを編集不可に設定
-        const linkField = validateField(
+        const linkField = getFieldData(
           record,
           linkConfig.linkField.fieldCd,
           "linkConfig.linkField.fieldCd",
@@ -380,9 +478,9 @@
       }
       case "table": {
         // テーブルタイプの場合：テーブル内の全行のリンクフィールドを編集不可に設定
-        const tableData = validateTable(record, linkConfig.linkField.tableCd);
+        const tableData = getTableData(record, linkConfig.linkField.tableCd);
         for (const tableRecord of tableData.value) {
-          const linkField = validateField(
+          const linkField = getFieldData(
             tableRecord.value,
             linkConfig.linkField.fieldCd,
             `テーブル ${linkConfig.linkField.tableCd}`,
@@ -437,7 +535,9 @@
   function replaceString(template, variables) {
     // テンプレート文字列内の${key}形式のプレースホルダーを実際の値で置換
     return template.replace(/\$\{([^}]+)\}/g, (match, key) => {
-      return variables[key.trim()] || match;
+      const trimmedKey = key.trim();
+      // キーが存在する場合は値を返す（空文字含む）、存在しない場合はmatchを返す
+      return trimmedKey in variables ? variables[trimmedKey] : match;
     });
   }
 })();
