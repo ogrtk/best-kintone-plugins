@@ -7,6 +7,25 @@
   /***************************************
    * 設定項目　ここまで
    ***************************************/
+
+  /**
+   * 設定の妥当性チェック
+   */
+  function validateConfig() {
+    if (!TARGET_FIELD_CD) {
+      throw new Error("TARGET_FIELD_CDが設定されていません。");
+    }
+    if (typeof TARGET_FIELD_CD !== "string") {
+      throw new Error("TARGET_FIELD_CDは文字列である必要があります。");
+    }
+    if (TARGET_FIELD_CD.trim() === "") {
+      throw new Error("TARGET_FIELD_CDは空文字列にできません。");
+    }
+  }
+
+  // 設定チェックを実行
+  validateConfig();
+
   /**
    * フォーム表示時にランダムなコード値を生成
    */

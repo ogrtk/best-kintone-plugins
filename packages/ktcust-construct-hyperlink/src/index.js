@@ -92,6 +92,102 @@
   /***************************************
    * 設定項目　ここまで
    ***************************************/
+
+  /**
+   * 設定の妥当性チェック
+   */
+  function validateConfig() {
+    if (!Array.isArray(LINK_CONFIGS)) {
+      throw new Error("LINK_CONFIGSは配列である必要があります。");
+    }
+
+    let configIndex = 0;
+    for (const config of LINK_CONFIGS) {
+      const prefix = `LINK_CONFIGS[${configIndex}]`;
+
+      // linkFieldのチェック
+      if (!config.linkField) {
+        throw new Error(`${prefix}.linkFieldが設定されていません。`);
+      }
+      if (!config.linkField.type) {
+        throw new Error(`${prefix}.linkField.typeが設定されていません。`);
+      }
+      if (
+        config.linkField.type !== "field" &&
+        config.linkField.type !== "table"
+      ) {
+        throw new Error(
+          `${prefix}.linkField.typeは"field"または"table"である必要があります。`,
+        );
+      }
+      if (!config.linkField.fieldCd) {
+        throw new Error(`${prefix}.linkField.fieldCdが設定されていません。`);
+      }
+      if (config.linkField.type === "table" && !config.linkField.tableCd) {
+        throw new Error(
+          `${prefix}.linkField.tableCdが設定されていません（type="table"の場合は必須）。`,
+        );
+      }
+
+      // baseUrlのチェック
+      if (!config.baseUrl) {
+        throw new Error(`${prefix}.baseUrlが設定されていません。`);
+      }
+      if (typeof config.baseUrl !== "string") {
+        throw new Error(`${prefix}.baseUrlは文字列である必要があります。`);
+      }
+
+      // replacementsのチェック
+      if (!config.replacements) {
+        throw new Error(`${prefix}.replacementsが設定されていません。`);
+      }
+      if (
+        typeof config.replacements !== "object" ||
+        Array.isArray(config.replacements)
+      ) {
+        throw new Error(
+          `${prefix}.replacementsはオブジェクトである必要があります。`,
+        );
+      }
+
+      // 各replacementのチェック
+      for (const key in config.replacements) {
+        const replacement = config.replacements[key];
+        const repPrefix = `${prefix}.replacements.${key}`;
+
+        if (!replacement.type) {
+          throw new Error(`${repPrefix}.typeが設定されていません。`);
+        }
+        if (replacement.type !== "field" && replacement.type !== "table") {
+          throw new Error(
+            `${repPrefix}.typeは"field"または"table"である必要があります。`,
+          );
+        }
+        if (!replacement.fieldCd) {
+          throw new Error(`${repPrefix}.fieldCdが設定されていません。`);
+        }
+        if (
+          replacement.skipIfEmpty !== undefined &&
+          typeof replacement.skipIfEmpty !== "boolean"
+        ) {
+          throw new Error(
+            `${repPrefix}.skipIfEmptyはboolean型である必要があります。`,
+          );
+        }
+      }
+
+      // styleのチェック（オプション）
+      if (config.style !== undefined && typeof config.style !== "string") {
+        throw new Error(`${prefix}.styleは文字列である必要があります。`);
+      }
+
+      configIndex++;
+    }
+  }
+
+  // 設定チェックを実行
+  validateConfig();
+
   /**
    * 登録・更新画面　表示時
    */
@@ -158,14 +254,17 @@
             if (replacementStrings === null) {
               break;
             }
+            // URL用の文字列とするためBASE64エンコード
             const linkUrl = encodeURI(
               replaceString(linkConfig.baseUrl, replacementStrings),
             );
+            // URL設定の対象フィールドを取得
             const linkField = getFieldData(
               event.record,
               linkConfig.linkField.fieldCd,
               "linkConfig.linkField.fieldCd",
             );
+            // 構成したURL文字列を設定
             linkField.value = linkUrl;
             break;
           }
@@ -173,10 +272,12 @@
             //
             // テーブルタイプの場合：各行に対してリンクURLを生成
             //
+            // 設定対象のテーブルの情報を取得
             const tableData = getTableData(
               event.record,
               linkConfig.linkField.tableCd,
             );
+            // テーブルの各行を処理
             for (const tableRecord of tableData.value) {
               // テーブル行とメインレコードの両方を使用して置換文字列を構築
               const replacementStrings = buildReplacementStrings(
@@ -184,19 +285,22 @@
                 event.record,
                 tableRecord,
               );
+              // URL設定対象項目を取得
               const linkField = getFieldData(
                 tableRecord.value,
                 linkConfig.linkField.fieldCd,
                 `テーブル:${linkConfig.linkField.tableCd}`,
               );
 
-              // skipIfEmptyがtrueで空値がある場合はクリア
               if (replacementStrings === null) {
+                // 置換文字が設定されておらず、URLの設定を行わない場合はクリア
                 linkField.value = "";
               } else {
+                // URLの文字列とするため、Base64エンコード
                 const linkUrl = encodeURI(
                   replaceString(linkConfig.baseUrl, replacementStrings),
                 );
+                // URLを設定
                 linkField.value = linkUrl;
               }
             }
@@ -294,6 +398,8 @@
             const linkEls = kintone.app.getFieldElements(
               linkConfig.linkField.fieldCd,
             );
+            // 一覧に対象の項目がない場合は警告を表示してスキップ
+            // （kintoneの一覧に、対象項目を表示しない設定とされている可能性もあるため）
             if (!linkEls || linkEls.length === 0) {
               console.warn(
                 `指定の項目がありません:${linkConfig.linkField.fieldCd}`,
@@ -302,11 +408,13 @@
             }
             // 各レコードに対応するHTML要素にリンク設定
             for (const [idx, record] of event.records.entries()) {
+              // 対象の項目を取得
               const linkField = getFieldData(
                 record,
                 linkConfig.linkField.fieldCd,
                 "linkConfig.linkField.fieldCd",
               );
+              // URLが設定されている場合、リンクとして設定する
               if (linkField.value) {
                 const linkEl = linkEls[idx];
                 setLinkElement(linkEl, linkConfig.style, linkField.value);
@@ -343,6 +451,9 @@
     for (const linkConfig of LINK_CONFIGS) {
       switch (linkConfig.linkField.type) {
         case "field": {
+          //
+          // フィールドタイプの場合
+          //
           const linkField = event.record[linkConfig.linkField.fieldCd];
           if (linkField) {
             linkField.disabled = true;
@@ -350,10 +461,15 @@
           break;
         }
         case "table": {
+          //
           // テーブルの場合、何もしない
+          //
           break;
         }
         default:
+          //
+          // それ以外が設定された場合はエラーとする
+          //
           handleError(
             `linkConfig.linkField.typeの設定が不正です:${linkConfig.linkField.type}`,
           );
@@ -421,6 +537,10 @@
       const replacement = replacements[key];
       switch (replacement.type) {
         case "field": {
+          //
+          // フィールドタイプの場合
+          //
+
           // メインレコードのフィールドから値を取得
           const field = getFieldData(
             record,
@@ -435,6 +555,10 @@
           break;
         }
         case "table": {
+          //
+          // テーブルタイプの場合
+          //
+
           // テーブル行のフィールドから値を取得
           if (!tableRecord) {
             handleError("テーブルレコードが指定されていません。");
@@ -452,6 +576,9 @@
           break;
         }
         default:
+          //
+          // それ以外が設定された場合はエラーとする
+          //
           handleError(
             `設定が不正です: replacements.${key}.type が ${replacement.type}`,
           );

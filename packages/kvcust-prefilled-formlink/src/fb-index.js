@@ -46,10 +46,94 @@
   /***************************************
    * 設定項目　ここまで
    ***************************************/
+
+  /**
+   * 設定の妥当性をチェック
+   */
+  function validateConfig() {
+    const errors = [];
+
+    // MAPPINGSのチェック
+    if (MAPPINGS) {
+      if (!Array.isArray(MAPPINGS)) {
+        errors.push("MAPPINGSは配列である必要があります");
+      } else {
+        for (const [index, mapping] of MAPPINGS.entries()) {
+          if (!mapping.paramName) {
+            errors.push(`MAPPINGS[${index}]: paramNameが設定されていません`);
+          }
+          if (!mapping.formItem) {
+            errors.push(`MAPPINGS[${index}]: formItemが設定されていません`);
+          }
+        }
+      }
+    }
+
+    // TABLE_MAPPINGSのチェック
+    if (TABLE_MAPPINGS) {
+      if (!TABLE_MAPPINGS.paramName) {
+        errors.push("TABLE_MAPPINGS.paramNameが設定されていません");
+      }
+      if (!TABLE_MAPPINGS.mappings || !Array.isArray(TABLE_MAPPINGS.mappings)) {
+        errors.push("TABLE_MAPPINGS.mappingsは配列である必要があります");
+      } else {
+        for (const [index, tableMapping] of TABLE_MAPPINGS.mappings.entries()) {
+          if (!tableMapping.formItem) {
+            errors.push(
+              `TABLE_MAPPINGS.mappings[${index}]: formItemが設定されていません`,
+            );
+          }
+          if (!tableMapping.paramTable) {
+            errors.push(
+              `TABLE_MAPPINGS.mappings[${index}]: paramTableが設定されていません`,
+            );
+          }
+          if (
+            !tableMapping.columnMappings ||
+            !Array.isArray(tableMapping.columnMappings)
+          ) {
+            errors.push(
+              `TABLE_MAPPINGS.mappings[${index}]: columnMappingsは配列である必要があります`,
+            );
+          } else {
+            for (const [colIndex, columnMapping] of tableMapping.columnMappings.entries()) {
+              if (!columnMapping.formColumn) {
+                errors.push(
+                  `TABLE_MAPPINGS.mappings[${index}].columnMappings[${colIndex}]: formColumnが設定されていません`,
+                );
+              }
+              if (!columnMapping.paramColumn) {
+                errors.push(
+                  `TABLE_MAPPINGS.mappings[${index}].columnMappings[${colIndex}]: paramColumnが設定されていません`,
+                );
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return errors;
+  }
+
+  // 設定のチェック（スクリプト読み込み時に実行）
+  const configErrors = validateConfig();
+  if (configErrors.length > 0) {
+    console.error("設定エラーが見つかりました:");
+    for (const error of configErrors) {
+      console.error(`  - ${error}`);
+    }
+    alert("設定エラーが見つかりました。詳細はコンソールを確認してください。");
+  }
+
   /**
    * フォーム表示時の処理
    */
   formBridge.events.on("form.show", (context) => {
+    // 設定エラーがあれば処理を中断
+    if (configErrors.length > 0) {
+      return;
+    }
     // 現在のURLのクエリ文字列を解析
     const params = new URLSearchParams(window.location.search);
 
