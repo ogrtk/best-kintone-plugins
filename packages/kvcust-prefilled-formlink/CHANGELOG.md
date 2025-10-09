@@ -1,5 +1,11 @@
 # @ogrtk/kvcust-prefilled-formlink
 
+## 0.9.2
+
+### Patch Changes
+
+- 58f60a0: check added
+
 ## 0.9.1
 
 ### Patch Changes
