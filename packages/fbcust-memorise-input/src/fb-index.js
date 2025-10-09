@@ -35,6 +35,43 @@
    * 設定項目　ここまで
    ***************************************/
 
+  //
+  // 設定のチェック
+  //
+  if (!ENABLE_SWITCH_CHECKBOX) {
+    throwError("必要な設定がありません: ENABLE_SWITCH_CHECKBOX");
+  }
+  if (!SELECTION_ENABLE) {
+    throwError("必要な設定がありません: SELECTION_ENABLE");
+  }
+  if (!SAVE_TARGET_EVENTS || SAVE_TARGET_EVENTS.length === 0) {
+    throwError("必要な設定がありません: SAVE_TARGET_EVENTS");
+  }
+  if (
+    (!MEMO_TARGET_ITEMS || MEMO_TARGET_ITEMS.length === 0) &&
+    (!MEMO_TARGET_TABLE_ITEMS || MEMO_TARGET_TABLE_ITEMS.length === 0)
+  ) {
+    throwError(
+      "必要な設定がありません: MEMO_TARGET_ITEMSまたはMEMO_TARGET_TABLE_ITEMSを設定してください",
+    );
+  }
+  if (MEMO_TARGET_ITEMS) {
+    for (const memoTargetItem of MEMO_TARGET_ITEMS) {
+      if (!memoTargetItem.formCd)
+        throwError("MEMO_TARGET_ITEMS:formCdが設定されていません");
+      if (!memoTargetItem.memoryCd)
+        throwError("MEMO_TARGET_ITEMS:memoryCdが設定されていません");
+    }
+  }
+  if (MEMO_TARGET_TABLE_ITEMS) {
+    for (const memoTargetTabeItem of MEMO_TARGET_TABLE_ITEMS) {
+      if (!memoTargetTabeItem.formCd)
+        throwError("MEMO_TARGET_TABLE_ITEMS:formCdが設定されていません");
+      if (!memoTargetTabeItem.memoryCd)
+        throwError("MEMO_TARGET_TABLE_ITEMS:memoryCdが設定されていません");
+    }
+  }
+
   /**
    * ブラウザへ画面上の入力値を保存
    */
@@ -75,44 +112,48 @@
   /**
    * ブラウザに保存したデータを読み出す
    */
+  // 対象イベントすべてに処理を設定(イベントリスナー)
   for (const targetEvent of LOAD_TARGET_EVENTS) {
-    // 対象イベントすべてに処理を設定
     formBridge.events.on(targetEvent, (context) => {
       // 記憶対象の全項目を対象に実行
-      for (const memoTargetItem of MEMO_TARGET_ITEMS) {
-        // localstorageの値を取得して、画面上に設定
-        // オブジェクトを文字列として保存しているため、JSON.parseで復元
-        context.setFieldValue(
-          memoTargetItem.formCd,
-          JSON.parse(localStorage.getItem(memoTargetItem.memoryCd)),
-        );
+      if (MEMO_TARGET_ITEMS) {
+        for (const memoTargetItem of MEMO_TARGET_ITEMS) {
+          // localstorageの値を取得して、画面上に設定
+          // オブジェクトを文字列として保存しているため、JSON.parseで復元
+          context.setFieldValue(
+            memoTargetItem.formCd,
+            JSON.parse(localStorage.getItem(memoTargetItem.memoryCd)),
+          );
+        }
       }
 
       // 記憶対象の全テーブル項目を対象に実行
-      for (const memoTargetTableItem of MEMO_TARGET_TABLE_ITEMS) {
-        // localstorageの値を取得して、画面上に設定
-        // オブジェクトを文字列として保存しているため、JSON.parseで復元
-        const tableData = JSON.parse(
-          localStorage.getItem(memoTargetTableItem.memoryCd),
-        );
+      if (MEMO_TARGET_TABLE_ITEMS) {
+        for (const memoTargetTableItem of MEMO_TARGET_TABLE_ITEMS) {
+          // localstorageの値を取得して、画面上に設定
+          // オブジェクトを文字列として保存しているため、JSON.parseで復元
+          const tableData = JSON.parse(
+            localStorage.getItem(memoTargetTableItem.memoryCd),
+          );
 
-        // 各行のデータを処理
-        for (const [index, row] of tableData.entries()) {
-          // ２行目以降は、テーブルに行追加する
-          if (index !== 0) addRow(memoTargetTableItem.formCd);
+          // 各行のデータを処理
+          for (const [index, row] of tableData.entries()) {
+            // ２行目以降は、テーブルに行追加する
+            if (index !== 0) addRow(memoTargetTableItem.formCd);
 
-          const rowData = row.value;
-          const columnKeys = Object.keys(rowData);
+            const rowData = row.value;
+            const columnKeys = Object.keys(rowData);
 
-          // 項目ごとに処理
-          for (const key of columnKeys) {
-            // テーブルに値を設定
-            context.setSubtableFieldValue(
-              memoTargetTableItem.formCd,
-              key,
-              index,
-              rowData[key].value,
-            );
+            // 項目ごとに処理
+            for (const key of columnKeys) {
+              // テーブルに値を設定
+              context.setSubtableFieldValue(
+                memoTargetTableItem.formCd,
+                key,
+                index,
+                rowData[key].value,
+              );
+            }
           }
         }
       }
@@ -135,5 +176,13 @@
       (button) => !button.closest("table"),
     );
     filteredButton.click();
+  }
+
+  /**
+   * エラー処理
+   */
+  function throwError(message) {
+    alert(message);
+    throw new Error(message);
   }
 })();
