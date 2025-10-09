@@ -4,35 +4,74 @@
       "releases": [
         {
           "name": "@ogrtk/ktcust-construct-hyperlink",
-          "type": "minor"
+          "type": "patch"
         },
         {
           "name": "@ogrtk/kvcust-prefilled-formlink",
           "type": "patch"
+        },
+        {
+          "name": "@ogrtk/kvcust-show-lastupdate",
+          "type": "patch"
+        },
+        {
+          "name": "@ogrtk/fbcust-memorise-input",
+          "type": "patch"
+        },
+        {
+          "name": "@ogrtk/fbcust-random-cd",
+          "type": "patch"
         }
       ],
-      "summary": "can ignore if empty",
-      "id": "chilly-dingos-sleep"
+      "summary": "check added",
+      "id": "fuzzy-states-push"
     }
   ],
   "releases": [
     {
       "name": "@ogrtk/ktcust-construct-hyperlink",
-      "type": "minor",
-      "oldVersion": "1.0.0",
+      "type": "patch",
+      "oldVersion": "1.1.0",
       "changesets": [
-        "chilly-dingos-sleep"
+        "fuzzy-states-push"
       ],
-      "newVersion": "1.1.0"
+      "newVersion": "1.1.1"
     },
     {
       "name": "@ogrtk/kvcust-prefilled-formlink",
       "type": "patch",
+      "oldVersion": "0.9.1",
+      "changesets": [
+        "fuzzy-states-push"
+      ],
+      "newVersion": "0.9.2"
+    },
+    {
+      "name": "@ogrtk/kvcust-show-lastupdate",
+      "type": "patch",
       "oldVersion": "0.9.0",
       "changesets": [
-        "chilly-dingos-sleep"
+        "fuzzy-states-push"
       ],
       "newVersion": "0.9.1"
+    },
+    {
+      "name": "@ogrtk/fbcust-memorise-input",
+      "type": "patch",
+      "oldVersion": "0.9.0",
+      "changesets": [
+        "fuzzy-states-push"
+      ],
+      "newVersion": "0.9.1"
+    },
+    {
+      "name": "@ogrtk/fbcust-random-cd",
+      "type": "patch",
+      "oldVersion": "1.0.0",
+      "changesets": [
+        "fuzzy-states-push"
+      ],
+      "newVersion": "1.0.1"
     }
   ]
 }

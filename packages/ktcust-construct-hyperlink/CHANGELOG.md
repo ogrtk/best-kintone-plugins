@@ -1,5 +1,11 @@
 # @ogrtk/ktcust-construct-hyperlink
 
+## 1.1.1
+
+### Patch Changes
+
+- 58f60a0: check added
+
 ## 1.1.0
 
 ### Minor Changes
