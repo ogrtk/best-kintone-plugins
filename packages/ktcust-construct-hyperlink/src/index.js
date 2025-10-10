@@ -186,7 +186,14 @@
   }
 
   // 設定チェックを実行
-  validateConfig();
+  try {
+    validateConfig();
+  } catch (error) {
+    console.error("設定エラーが見つかりました:");
+    console.error(`  - ${error.message}`);
+    alert(`設定エラー: ${error.message}`);
+    throw error;
+  }
 
   /**
    * 登録・更新画面　表示時

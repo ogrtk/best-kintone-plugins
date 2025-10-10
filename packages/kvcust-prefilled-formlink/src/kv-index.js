@@ -63,9 +63,136 @@
    ***************************************/
 
   /**
+   * 設定の妥当性をチェック
+   */
+  function validateConfig() {
+    const errors = [];
+
+    // FORM_URLのチェック
+    if (!FORM_URL || typeof FORM_URL !== "string") {
+      errors.push("FORM_URL: URLが設定されていないか文字列ではありません");
+    } else {
+      try {
+        new URL(FORM_URL);
+      } catch {
+        errors.push("FORM_URL: 有効なURLではありません");
+      }
+    }
+
+    // MAPPINGSのチェック
+    if (MAPPINGS) {
+      if (!Array.isArray(MAPPINGS)) {
+        errors.push("MAPPINGSは配列である必要があります");
+      } else {
+        for (const [index, mapping] of MAPPINGS.entries()) {
+          if (!mapping.viewItem) {
+            errors.push(`MAPPINGS[${index}]: viewItemが設定されていません`);
+          }
+          if (!mapping.paramName) {
+            errors.push(`MAPPINGS[${index}]: paramNameが設定されていません`);
+          }
+        }
+      }
+    }
+
+    // TABLE_MAPPINGSのチェック
+    if (TABLE_MAPPINGS) {
+      if (!TABLE_MAPPINGS.paramName) {
+        errors.push("TABLE_MAPPINGS.paramNameが設定されていません");
+      }
+      if (!TABLE_MAPPINGS.mappings || !Array.isArray(TABLE_MAPPINGS.mappings)) {
+        errors.push("TABLE_MAPPINGS.mappingsは配列である必要があります");
+      } else {
+        for (const [index, tableMapping] of TABLE_MAPPINGS.mappings.entries()) {
+          if (!tableMapping.viewItem) {
+            errors.push(
+              `TABLE_MAPPINGS.mappings[${index}]: viewItemが設定されていません`,
+            );
+          }
+          if (!tableMapping.paramTable) {
+            errors.push(
+              `TABLE_MAPPINGS.mappings[${index}]: paramTableが設定されていません`,
+            );
+          }
+          if (
+            !tableMapping.columnMappings ||
+            !Array.isArray(tableMapping.columnMappings)
+          ) {
+            errors.push(
+              `TABLE_MAPPINGS.mappings[${index}]: columnMappingsは配列である必要があります`,
+            );
+          } else {
+            for (const [
+              colIndex,
+              columnMapping,
+            ] of tableMapping.columnMappings.entries()) {
+              if (!columnMapping.viewColumn) {
+                errors.push(
+                  `TABLE_MAPPINGS.mappings[${index}].columnMappings[${colIndex}]: viewColumnが設定されていません`,
+                );
+              }
+              if (!columnMapping.paramColumn) {
+                errors.push(
+                  `TABLE_MAPPINGS.mappings[${index}].columnMappings[${colIndex}]: paramColumnが設定されていません`,
+                );
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // SPACE_FOR_LINKのチェック
+    if (!SPACE_FOR_LINK || typeof SPACE_FOR_LINK !== "string") {
+      errors.push(
+        "SPACE_FOR_LINK: フィールドコードが設定されていないか文字列ではありません",
+      );
+    }
+
+    // LINK_TEXTのチェック
+    if (!LINK_TEXT || typeof LINK_TEXT !== "string") {
+      errors.push(
+        "LINK_TEXT: リンクテキストが設定されていないか文字列ではありません",
+      );
+    }
+
+    // LINK_TARGETのチェック
+    if (!LINK_TARGET || typeof LINK_TARGET !== "string") {
+      errors.push(
+        "LINK_TARGET: リンクターゲットが設定されていないか文字列ではありません",
+      );
+    } else if (LINK_TARGET !== "_self" && LINK_TARGET !== "_blank") {
+      errors.push('LINK_TARGET: "_self"または"_blank"である必要があります');
+    }
+
+    // LINK_STYLEのチェック
+    if (!LINK_STYLE || typeof LINK_STYLE !== "string") {
+      errors.push(
+        "LINK_STYLE: リンクスタイルが設定されていないか文字列ではありません",
+      );
+    }
+
+    return errors;
+  }
+
+  // 設定のチェック（スクリプト読み込み時に実行）
+  const configErrors = validateConfig();
+  if (configErrors.length > 0) {
+    console.error("設定エラーが見つかりました:");
+    for (const error of configErrors) {
+      console.error(`  - ${error}`);
+      alert(`設定エラーが見つかりました。${error}`);
+    }
+  }
+
+  /**
    * 詳細画面表示時の処理
    */
   kviewer.events.on("record.show", (context) => {
+    // 設定エラーがあれば処理を中断
+    if (configErrors.length > 0) {
+      return;
+    }
     // 入力済みフォーム用のリンク作成
     const linkUrl = constructPrefilledFormlink(
       context.record.kintoneRecord,

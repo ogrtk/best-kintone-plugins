@@ -24,7 +24,14 @@
   }
 
   // 設定チェックを実行
-  validateConfig();
+  try {
+    validateConfig();
+  } catch (error) {
+    console.error("設定エラーが見つかりました:");
+    console.error(`  - ${error.message}`);
+    alert(`設定エラー: ${error.message}`);
+    throw error;
+  }
 
   /**
    * フォーム表示時にランダムなコード値を生成

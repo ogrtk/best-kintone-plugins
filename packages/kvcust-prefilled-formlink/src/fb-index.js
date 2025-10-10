@@ -28,8 +28,14 @@
         formItem: "質疑",
         paramTable: "pQuestions",
         columnMappings: [
-          { formColumn: "質問", paramColumn: "pQuestion" },
-          { formColumn: "備考", paramColumn: "pMemo" },
+          {
+            formColumn: "質問",
+            paramColumn: "pQuestion",
+          },
+          {
+            formColumn: "備考",
+            paramColumn: "pMemo",
+          },
         ],
       },
       {
@@ -96,7 +102,10 @@
               `TABLE_MAPPINGS.mappings[${index}]: columnMappingsは配列である必要があります`,
             );
           } else {
-            for (const [colIndex, columnMapping] of tableMapping.columnMappings.entries()) {
+            for (const [
+              colIndex,
+              columnMapping,
+            ] of tableMapping.columnMappings.entries()) {
               if (!columnMapping.formColumn) {
                 errors.push(
                   `TABLE_MAPPINGS.mappings[${index}].columnMappings[${colIndex}]: formColumnが設定されていません`,
@@ -122,8 +131,8 @@
     console.error("設定エラーが見つかりました:");
     for (const error of configErrors) {
       console.error(`  - ${error}`);
+      alert(`設定エラーが見つかりました。${error}`);
     }
-    alert("設定エラーが見つかりました。詳細はコンソールを確認してください。");
   }
 
   /**
