@@ -1,5 +1,11 @@
 # @ogrtk/ktcust-construct-hyperlink
 
+## 1.1.2
+
+### Patch Changes
+
+- c844bf5: config checking
+
 ## 1.1.1
 
 ### Patch Changes

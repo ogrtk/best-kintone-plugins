@@ -23,55 +23,55 @@
           "type": "patch"
         }
       ],
-      "summary": "check added",
-      "id": "fuzzy-states-push"
+      "summary": "config checking",
+      "id": "forty-ideas-serve"
     }
   ],
   "releases": [
     {
       "name": "@ogrtk/ktcust-construct-hyperlink",
       "type": "patch",
-      "oldVersion": "1.1.0",
+      "oldVersion": "1.1.1",
       "changesets": [
-        "fuzzy-states-push"
+        "forty-ideas-serve"
       ],
-      "newVersion": "1.1.1"
+      "newVersion": "1.1.2"
     },
     {
       "name": "@ogrtk/kvcust-prefilled-formlink",
       "type": "patch",
-      "oldVersion": "0.9.1",
+      "oldVersion": "0.9.2",
       "changesets": [
-        "fuzzy-states-push"
+        "forty-ideas-serve"
       ],
-      "newVersion": "0.9.2"
+      "newVersion": "0.9.3"
     },
     {
       "name": "@ogrtk/kvcust-show-lastupdate",
       "type": "patch",
-      "oldVersion": "0.9.0",
+      "oldVersion": "0.9.1",
       "changesets": [
-        "fuzzy-states-push"
+        "forty-ideas-serve"
       ],
-      "newVersion": "0.9.1"
+      "newVersion": "0.9.2"
     },
     {
       "name": "@ogrtk/fbcust-memorise-input",
       "type": "patch",
-      "oldVersion": "0.9.0",
+      "oldVersion": "0.9.1",
       "changesets": [
-        "fuzzy-states-push"
+        "forty-ideas-serve"
       ],
-      "newVersion": "0.9.1"
+      "newVersion": "0.9.2"
     },
     {
       "name": "@ogrtk/fbcust-random-cd",
       "type": "patch",
-      "oldVersion": "1.0.0",
+      "oldVersion": "1.0.1",
       "changesets": [
-        "fuzzy-states-push"
+        "forty-ideas-serve"
       ],
-      "newVersion": "1.0.1"
+      "newVersion": "1.0.2"
     }
   ]
 }

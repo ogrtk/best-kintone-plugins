@@ -1,5 +1,11 @@
 # @ogrtk/kvcust-prefilled-formlink
 
+## 0.9.3
+
+### Patch Changes
+
+- c844bf5: config checking
+
 ## 0.9.2
 
 ### Patch Changes
