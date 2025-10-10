@@ -35,40 +35,96 @@
    * 設定項目　ここまで
    ***************************************/
 
-  //
-  // 設定のチェック
-  //
-  if (!ENABLE_SWITCH_CHECKBOX) {
-    throwError("必要な設定がありません: ENABLE_SWITCH_CHECKBOX");
-  }
-  if (!SELECTION_ENABLE) {
-    throwError("必要な設定がありません: SELECTION_ENABLE");
-  }
-  if (!SAVE_TARGET_EVENTS || SAVE_TARGET_EVENTS.length === 0) {
-    throwError("必要な設定がありません: SAVE_TARGET_EVENTS");
-  }
-  if (
-    (!MEMO_TARGET_ITEMS || MEMO_TARGET_ITEMS.length === 0) &&
-    (!MEMO_TARGET_TABLE_ITEMS || MEMO_TARGET_TABLE_ITEMS.length === 0)
-  ) {
-    throwError(
-      "必要な設定がありません: MEMO_TARGET_ITEMSまたはMEMO_TARGET_TABLE_ITEMSを設定してください",
-    );
-  }
-  if (MEMO_TARGET_ITEMS) {
-    for (const memoTargetItem of MEMO_TARGET_ITEMS) {
-      if (!memoTargetItem.formCd)
-        throwError("MEMO_TARGET_ITEMS:formCdが設定されていません");
-      if (!memoTargetItem.memoryCd)
-        throwError("MEMO_TARGET_ITEMS:memoryCdが設定されていません");
+  /**
+   * 設定の妥当性をチェック
+   */
+  function validateConfig() {
+    const errors = [];
+
+    // ENABLE_SWITCH_CHECKBOXのチェック
+    if (!ENABLE_SWITCH_CHECKBOX || typeof ENABLE_SWITCH_CHECKBOX !== "string") {
+      errors.push(
+        "ENABLE_SWITCH_CHECKBOX: フィールドコードが設定されていないか文字列ではありません",
+      );
     }
+
+    // SELECTION_ENABLEのチェック
+    if (!SELECTION_ENABLE || typeof SELECTION_ENABLE !== "string") {
+      errors.push(
+        "SELECTION_ENABLE: 選択値が設定されていないか文字列ではありません",
+      );
+    }
+
+    // SAVE_TARGET_EVENTSのチェック
+    if (
+      !SAVE_TARGET_EVENTS ||
+      !Array.isArray(SAVE_TARGET_EVENTS) ||
+      SAVE_TARGET_EVENTS.length === 0
+    ) {
+      errors.push("SAVE_TARGET_EVENTS: 配列が設定されていないか空の配列です");
+    }
+
+    // LOAD_TARGET_EVENTSのチェック
+    if (
+      !LOAD_TARGET_EVENTS ||
+      !Array.isArray(LOAD_TARGET_EVENTS) ||
+      LOAD_TARGET_EVENTS.length === 0
+    ) {
+      errors.push("LOAD_TARGET_EVENTS: 配列が設定されていないか空の配列です");
+    }
+
+    // MEMO_TARGET_ITEMSとMEMO_TARGET_TABLE_ITEMSの両方が空でないかチェック
+    if (
+      (!MEMO_TARGET_ITEMS || MEMO_TARGET_ITEMS.length === 0) &&
+      (!MEMO_TARGET_TABLE_ITEMS || MEMO_TARGET_TABLE_ITEMS.length === 0)
+    ) {
+      errors.push(
+        "MEMO_TARGET_ITEMSまたはMEMO_TARGET_TABLE_ITEMSのいずれかを設定してください",
+      );
+    }
+
+    // MEMO_TARGET_ITEMSのチェック
+    if (MEMO_TARGET_ITEMS && Array.isArray(MEMO_TARGET_ITEMS)) {
+      for (const [index, item] of MEMO_TARGET_ITEMS.entries()) {
+        if (!item.formCd) {
+          errors.push(
+            `MEMO_TARGET_ITEMS[${index}]: formCdが設定されていません`,
+          );
+        }
+        if (!item.memoryCd) {
+          errors.push(
+            `MEMO_TARGET_ITEMS[${index}]: memoryCdが設定されていません`,
+          );
+        }
+      }
+    }
+
+    // MEMO_TARGET_TABLE_ITEMSのチェック
+    if (MEMO_TARGET_TABLE_ITEMS && Array.isArray(MEMO_TARGET_TABLE_ITEMS)) {
+      for (const [index, item] of MEMO_TARGET_TABLE_ITEMS.entries()) {
+        if (!item.formCd) {
+          errors.push(
+            `MEMO_TARGET_TABLE_ITEMS[${index}]: formCdが設定されていません`,
+          );
+        }
+        if (!item.memoryCd) {
+          errors.push(
+            `MEMO_TARGET_TABLE_ITEMS[${index}]: memoryCdが設定されていません`,
+          );
+        }
+      }
+    }
+
+    return errors;
   }
-  if (MEMO_TARGET_TABLE_ITEMS) {
-    for (const memoTargetTabeItem of MEMO_TARGET_TABLE_ITEMS) {
-      if (!memoTargetTabeItem.formCd)
-        throwError("MEMO_TARGET_TABLE_ITEMS:formCdが設定されていません");
-      if (!memoTargetTabeItem.memoryCd)
-        throwError("MEMO_TARGET_TABLE_ITEMS:memoryCdが設定されていません");
+
+  // 設定のチェック（スクリプト読み込み時に実行）
+  const configErrors = validateConfig();
+  if (configErrors.length > 0) {
+    console.error("設定エラーが見つかりました:");
+    for (const error of configErrors) {
+      console.error(`  - ${error}`);
+      alert(`設定エラーが見つかりました。${error}`);
     }
   }
 

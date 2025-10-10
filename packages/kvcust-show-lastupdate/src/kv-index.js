@@ -28,7 +28,9 @@
     const errors = [];
 
     if (!CONFIG.API_URL || typeof CONFIG.API_URL !== "string") {
-      errors.push("CONFIG.API_URL: URLが設定されていないか文字列ではありません");
+      errors.push(
+        "CONFIG.API_URL: URLが設定されていないか文字列ではありません",
+      );
     } else {
       try {
         new URL(CONFIG.API_URL);
@@ -85,19 +87,15 @@
   if (configErrors.length > 0) {
     console.error("設定エラーが見つかりました:");
     for (const error of configErrors) {
+      alert(`設定エラーが見つかりました。${error}`);
       console.error(`  - ${error}`);
     }
-    alert("設定エラーが見つかりました。詳細はコンソールを確認してください。");
   }
 
   /**
    * 一覧画面表示時のイベントハンドラ
    */
   kviewer.events.on("records.show", async () => {
-    // 設定エラーがあれば処理を中断
-    if (configErrors.length > 0) {
-      return;
-    }
     try {
       const lastUpdate = await fetchLatestUpdate();
       renderLastUpdate(lastUpdate);
