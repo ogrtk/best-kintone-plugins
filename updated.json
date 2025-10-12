@@ -4,22 +4,22 @@
       "releases": [
         {
           "name": "@ogrtk/kvcust-download-csv",
-          "type": "minor"
+          "type": "major"
         }
       ],
-      "summary": "1st",
-      "id": "cuddly-flowers-laugh"
+      "summary": "readme added",
+      "id": "clean-news-give"
     }
   ],
   "releases": [
     {
       "name": "@ogrtk/kvcust-download-csv",
-      "type": "minor",
-      "oldVersion": "0.8.0",
+      "type": "major",
+      "oldVersion": "0.9.0",
       "changesets": [
-        "cuddly-flowers-laugh"
+        "clean-news-give"
       ],
-      "newVersion": "0.9.0"
+      "newVersion": "1.0.0"
     }
   ]
 }
