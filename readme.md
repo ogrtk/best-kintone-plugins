@@ -14,9 +14,9 @@
 
 | project | 対象 | 説明 | artifact |
 | ------------------------------------------------------------------------- | ----------- | ------------------------ |----|
-| [**fbcust-memorise-input**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-memorise-input) | FormBridge | 入力内容のブラウザ保存・復元機能 | [0.8.0](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Ffbcust-memorise-input%400.8.0)
-| [**fbcust-random-cd**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-random-cd) | FormBridge | ランダムコード値の生成 | [1.0.0](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Ffbcust-random-cd%401.0.0)
-| [**ktcust-construct-hyperlink**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktcust-construct-hyperlink) | kintone | ハイパーリンク構築カスタマイズ | [1.0.0](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Fktcust-construct-hyperlink%401.0.0)
+| [**fbcust-memorise-input**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-memorise-input) | FormBridge | 入力内容のブラウザ保存・復元機能 | [0.9.2](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Ffbcust-memorise-input%400.9.2)
+| [**fbcust-random-cd**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/fbcust-random-cd) | FormBridge | ランダムコード値の生成 | [1.0.2](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Ffbcust-random-cd%401.0.2)
+| [**ktcust-construct-hyperlink**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktcust-construct-hyperlink) | kintone | ハイパーリンク構築カスタマイズ | [1.1.2](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Fktcust-construct-hyperlink%401.1.2)
 | [**ktplug-felica-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-felica-reader) | kintone | FeliCa読取プラグイン | [0.8.7](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Fktplug-felica-reader%400.8.7)
 | [**ktplug-qrcode-reader**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/ktplug-qrcode-reader) | kintone | QRコード読取プラグイン | [0.8.2](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Fktplug-qrcode-reader%400.8.2)
 | [**kvcust-download-csv**](https://github.com/ogrtk/best-kintone-plugins/tree/main/packages/kvcust-download-csv) | kViewer | CSVダウンロード | [0.8.0](https://github.com/ogrtk/best-kintone-plugins/releases/tag/%40ogrtk%2Fkvcust-download-csv%400.8.0)

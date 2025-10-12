@@ -4,22 +4,74 @@
       "releases": [
         {
           "name": "@ogrtk/ktcust-construct-hyperlink",
-          "type": "major"
+          "type": "patch"
+        },
+        {
+          "name": "@ogrtk/kvcust-prefilled-formlink",
+          "type": "patch"
+        },
+        {
+          "name": "@ogrtk/kvcust-show-lastupdate",
+          "type": "patch"
+        },
+        {
+          "name": "@ogrtk/fbcust-memorise-input",
+          "type": "patch"
+        },
+        {
+          "name": "@ogrtk/fbcust-random-cd",
+          "type": "patch"
         }
       ],
-      "summary": "1st",
-      "id": "late-wings-agree"
+      "summary": "config checking",
+      "id": "forty-ideas-serve"
     }
   ],
   "releases": [
     {
       "name": "@ogrtk/ktcust-construct-hyperlink",
-      "type": "major",
-      "oldVersion": "0.1.0",
+      "type": "patch",
+      "oldVersion": "1.1.1",
       "changesets": [
-        "late-wings-agree"
+        "forty-ideas-serve"
       ],
-      "newVersion": "1.0.0"
+      "newVersion": "1.1.2"
+    },
+    {
+      "name": "@ogrtk/kvcust-prefilled-formlink",
+      "type": "patch",
+      "oldVersion": "0.9.2",
+      "changesets": [
+        "forty-ideas-serve"
+      ],
+      "newVersion": "0.9.3"
+    },
+    {
+      "name": "@ogrtk/kvcust-show-lastupdate",
+      "type": "patch",
+      "oldVersion": "0.9.1",
+      "changesets": [
+        "forty-ideas-serve"
+      ],
+      "newVersion": "0.9.2"
+    },
+    {
+      "name": "@ogrtk/fbcust-memorise-input",
+      "type": "patch",
+      "oldVersion": "0.9.1",
+      "changesets": [
+        "forty-ideas-serve"
+      ],
+      "newVersion": "0.9.2"
+    },
+    {
+      "name": "@ogrtk/fbcust-random-cd",
+      "type": "patch",
+      "oldVersion": "1.0.1",
+      "changesets": [
+        "forty-ideas-serve"
+      ],
+      "newVersion": "1.0.2"
     }
   ]
 }
