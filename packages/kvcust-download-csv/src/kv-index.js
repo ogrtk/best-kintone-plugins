@@ -7,9 +7,7 @@
     // 通常フィールドとサブテーブルのフィールドを含む
     fields: [
       "案件名",
-      "日付_0",
-      "質疑.質問",
-      "質疑2.質問2",
+      "日付",
       "質疑.質問",
       // 例: '顧客名', '受注日', 'テーブル_1.商品名', 'テーブル_1.数量', 'テーブル_1.単価'
       // 実際の使用時は、下記のように適切なフィールドコードに変更してください
@@ -98,15 +96,76 @@
   };
 
   // ========================================
+  // 設定の妥当性チェック
+  // ========================================
+  /**
+   * 設定の妥当性をチェック
+   * @returns {string[]} エラーメッセージの配列
+   */
+  function validateConfig() {
+    const errors = [];
+
+    // CSV_CONFIG.fields のチェック
+    if (!CSV_CONFIG.fields || !Array.isArray(CSV_CONFIG.fields)) {
+      errors.push(
+        "CSV_CONFIG.fields: フィールド配列が設定されていないか配列ではありません",
+      );
+    } else if (CSV_CONFIG.fields.length === 0) {
+      errors.push(
+        "CSV_CONFIG.fields: 出力するフィールドが1つも設定されていません。出力対象のフィールドコードを指定してください",
+      );
+    }
+
+    // CSV_CONFIG.encoding.includeBOM のチェック
+    if (typeof CSV_CONFIG.encoding?.includeBOM !== "boolean") {
+      errors.push(
+        "CSV_CONFIG.encoding.includeBOM: boolean値ではありません (true または false を指定してください)",
+      );
+    }
+
+    // CSV_CONFIG.encoding.lineBreak のチェック
+    if (!CSV_CONFIG.encoding?.lineBreak) {
+      errors.push(
+        "CSV_CONFIG.encoding.lineBreak: 改行コードが設定されていません",
+      );
+    } else if (typeof CSV_CONFIG.encoding.lineBreak !== "string") {
+      errors.push(
+        'CSV_CONFIG.encoding.lineBreak: 文字列ではありません ("\\r\\n", "\\n", "\\r" のいずれかを指定してください)',
+      );
+    } else if (!["\r\n", "\n", "\r"].includes(CSV_CONFIG.encoding.lineBreak)) {
+      errors.push(
+        'CSV_CONFIG.encoding.lineBreak: 無効な改行コードです ("\\r\\n", "\\n", "\\r" のいずれかを指定してください)',
+      );
+    }
+
+    return errors;
+  }
+
+  // 設定のチェック（スクリプト読み込み時に実行）
+  const configErrors = validateConfig();
+  if (configErrors.length > 0) {
+    console.error("=== CSV出力カスタマイズ: 設定エラー ===");
+    for (const error of configErrors) {
+      console.error(`  - ${error}`);
+    }
+    alert(
+      `CSV出力カスタマイズの設定にエラーがあります:\n\n${configErrors.join("\n")}\n\n詳細はコンソールを確認してください。`,
+    );
+    throw new Error("CSV出力カスタマイズの設定が正しくありません");
+  }
+
+  // ========================================
   // スタイルシートの追加
   // ========================================
-  const style = document.createElement("style");
-  style.textContent = `
+  (() => {
+    const style = document.createElement("style");
+    style.textContent = `
     #kviewer_csv_download_button:hover {
       background-color: ${STYLE_CONFIG.downloadButtonHover.backgroundColor} !important;
     }
   `;
-  document.head.appendChild(style);
+    document.head.appendChild(style);
+  })();
 
   /**
    * グローバル定義
@@ -244,7 +303,10 @@
     });
   }
 
-  // context.recordsから表示されているレコードを取得する関数
+  /**
+   * context.recordsから表示されているレコードを取得する関数
+   * @returns
+   */
   function getDisplayedRecords() {
     if (!currentContext || !currentContext.records) {
       throw new Error("レコードデータが利用できません");
@@ -258,12 +320,8 @@
   function generateCSV(records) {
     if (records.length === 0) return "";
 
-    // 設定が空の場合は、全フィールドを出力対象とする
-    let targetFields = CSV_CONFIG.fields;
-    if (!targetFields || targetFields.length === 0) {
-      // 全フィールドを自動検出
-      targetFields = getAllFieldCodes(records);
-    }
+    // 設定からフィールド一覧を取得（グローバルでチェック済み）
+    const targetFields = CSV_CONFIG.fields;
 
     // ヘッダー行を作成（"*開始行"列を先頭に追加）
     const headers = ["*開始行", ...targetFields];
@@ -325,36 +383,9 @@
     return csvContent;
   }
 
-  // 全フィールドコードを取得（設定が空の場合用）
-  function getAllFieldCodes(records) {
-    if (records.length === 0) return [];
-
-    const fieldCodes = [];
-    const firstRecord = records[0];
-
-    for (const fieldCode in firstRecord) {
-      if (
-        firstRecord.kintoneRecord?.[fieldCode] &&
-        firstRecord.kintoneRecord[fieldCode].type === "SUBTABLE"
-      ) {
-        // サブテーブルの場合、子フィールドも追加
-        const tableValue = firstRecord.kintoneRecord[fieldCode].value;
-        if (tableValue && tableValue.length > 0) {
-          const firstRow = tableValue[0].value;
-          for (const subFieldCode in firstRow) {
-            fieldCodes.push(`${fieldCode}.${subFieldCode}`);
-          }
-        }
-      } else {
-        // 通常フィールド
-        fieldCodes.push(fieldCode);
-      }
-    }
-
-    return fieldCodes;
-  }
-
-  // サブテーブルデータを抽出
+  /**
+   * サブテーブルデータを抽出
+   */
   function extractTableData(record, targetFields) {
     const tableData = {};
 
@@ -381,7 +412,11 @@
     return tableData;
   }
 
-  // フィールド値を文字列として取得
+  /**
+   * フィールド値を文字列として取得
+   * @param {*} field
+   * @returns
+   */
   function getFieldValue(field) {
     if (!field) return "";
 
@@ -412,7 +447,11 @@
     return "";
   }
 
-  // CSV用のエスケープ処理
+  /**
+   * CSV用のエスケープ処理
+   * @param {*} value
+   * @returns
+   */
   function escapeCSV(value) {
     // カンマ、ダブルクォート、改行が含まれている場合はダブルクォートで囲む
     if (
@@ -427,7 +466,11 @@
     return value;
   }
 
-  // File System Access API を使用したダウンロード（前回フォルダを記憶）
+  /**
+   * File System Access API を使用したダウンロード（前回フォルダを記憶）
+   * @param {*} csvContent
+   * @param {*} filename
+   */
   async function downloadWithFileSystemAPI(csvContent, filename) {
     // ファイル保存ダイアログを表示（idで前回のフォルダを記憶）
     const handle = await window.showSaveFilePicker({
@@ -453,7 +496,11 @@
     await writable.close();
   }
 
-  // 従来のダウンロード方式（Blob + download属性）
+  /**
+   * 従来のダウンロード方式（Blob + download属性）
+   * @param {*} csvContent
+   * @param {*} filename
+   */
   function downloadWithBlobURL(csvContent, filename) {
     // BOM設定に応じてBlobを作成
     let blobParts;
@@ -484,7 +531,12 @@
     URL.revokeObjectURL(url);
   }
 
-  // CSVファイルをダウンロードする関数（メイン）
+  /**
+   * CSVファイルをダウンロード
+   * @param {*} csvContent
+   * @param {*} filename
+   * @returns
+   */
   async function downloadCSV(csvContent, filename) {
     // File System Access API をサポートしているか確認
     if ("showSaveFilePicker" in window) {
