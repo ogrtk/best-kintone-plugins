@@ -4,22 +4,22 @@
       "releases": [
         {
           "name": "@ogrtk/kvcust-download-csv",
-          "type": "major"
+          "type": "patch"
         }
       ],
-      "summary": "readme added",
-      "id": "clean-news-give"
+      "summary": "style",
+      "id": "wet-boats-bow"
     }
   ],
   "releases": [
     {
       "name": "@ogrtk/kvcust-download-csv",
-      "type": "major",
-      "oldVersion": "0.9.0",
+      "type": "patch",
+      "oldVersion": "1.0.0",
       "changesets": [
-        "clean-news-give"
+        "wet-boats-bow"
       ],
-      "newVersion": "1.0.0"
+      "newVersion": "1.0.1"
     }
   ]
 }
