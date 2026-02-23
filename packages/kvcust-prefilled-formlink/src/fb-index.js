@@ -5,6 +5,9 @@
   // 項目のマッピング設定
   //  paramName: URLパラメータの項目名
   //  formItem: Frombridge上のフィールドコード
+  // ※項目のマッピングを使用しない場合、undefinedとして定義する
+  // const MAPPINGS = undefined;
+
   const MAPPINGS = [
     { paramName: "pAnName", formItem: "案件名" },
     { paramName: "pAnNo", formItem: "案件番号" },
@@ -20,6 +23,8 @@
   //    columnMappings: 各列のマッピング設定
   //      formColumn: Frombridge上のテーブル列のフィールドコード
   //      paramColumn: URLパラメータ中の対応するテーブル列名
+  // ※テーブル項目のマッピングを使用しない場合、undefinedとして定義する
+  // const TABLE_MAPPINGS = undefined;
 
   const TABLE_MAPPINGS = {
     paramName: "pTables",
