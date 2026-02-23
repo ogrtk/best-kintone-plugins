@@ -3,23 +3,23 @@
     {
       "releases": [
         {
-          "name": "@ogrtk/kvcust-download-csv",
-          "type": "patch"
+          "name": "@ogrtk/kvcust-prefilled-formlink",
+          "type": "minor"
         }
       ],
-      "summary": "style",
-      "id": "wet-boats-bow"
+      "summary": "added example for unused mappings and fixed for the case",
+      "id": "ripe-knives-start"
     }
   ],
   "releases": [
     {
-      "name": "@ogrtk/kvcust-download-csv",
-      "type": "patch",
-      "oldVersion": "1.0.0",
+      "name": "@ogrtk/kvcust-prefilled-formlink",
+      "type": "minor",
+      "oldVersion": "0.9.3",
       "changesets": [
-        "wet-boats-bow"
+        "ripe-knives-start"
       ],
-      "newVersion": "1.0.1"
+      "newVersion": "0.10.0"
     }
   ]
 }
