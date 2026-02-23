@@ -1,5 +1,11 @@
 # @ogrtk/kvcust-prefilled-formlink
 
+## 0.10.0
+
+### Minor Changes
+
+- aed8134: added example for unused mappings and fixed for the case
+
 ## 0.9.3
 
 ### Patch Changes
