@@ -9,6 +9,8 @@
   // 項目のマッピング設定
   //  viewItem: kViewerのフィールドコード
   //  paramName: URLパラメータとして設定する項目名
+  // ※項目のマッピングを使用しない場合、undefinedとして定義する
+  // const MAPPINGS = undefined;
   const MAPPINGS = [
     { viewItem: "案件名", paramName: "pAnName" },
     { viewItem: "案件番号", paramName: "pAnNo" },
@@ -23,6 +25,8 @@
   //    columnMappings: 各列のマッピング設定
   //      viewColumn: kViewer上のテーブル列のフィールドコード
   //      paramColumn: URLパラメータ中の対応するテーブル列名
+  // ※テーブル項目のマッピングを使用しない場合、undefinedとして定義する
+  // const TABLE_MAPPINGS = undefined;
   const TABLE_MAPPINGS = {
     paramName: "pTables",
     mappings: [
@@ -216,29 +220,30 @@
     tableMappings,
   ) {
     const params = new URLSearchParams();
-    for (const mapping of mappings) {
-      params.append(mapping.paramName, kintoneRecord[mapping.viewItem].value);
-    }
-
-    const paramTableDatas = [];
-
-    for (const tableMapping of tableMappings.mappings) {
-      const paramTableData = { [tableMapping.paramTable]: [] };
-
-      const tableData = kintoneRecord[tableMapping.viewItem];
-      for (const rowData of tableData.value) {
-        const paramTableRowData = {};
-        for (const columnMapping of tableMapping.columnMappings) {
-          paramTableRowData[columnMapping.paramColumn] =
-            rowData.value[columnMapping.viewColumn].value;
-        }
-        paramTableData[tableMapping.paramTable].push(paramTableRowData);
+    if (mappings) {
+      for (const mapping of mappings) {
+        params.append(mapping.paramName, kintoneRecord[mapping.viewItem].value);
       }
-
-      paramTableDatas.push(paramTableData);
     }
 
-    params.append(tableMappings.paramName, JSON.stringify(paramTableDatas));
+    if (tableMappings) {
+      const paramTableDatas = [];
+
+      for (const tableMapping of tableMappings.mappings) {
+        const paramTableData = { [tableMapping.paramTable]: [] };
+        const tableData = kintoneRecord[tableMapping.viewItem];
+        for (const rowData of tableData.value) {
+          const paramTableRowData = {};
+          for (const columnMapping of tableMapping.columnMappings) {
+            paramTableRowData[columnMapping.paramColumn] =
+              rowData.value[columnMapping.viewColumn].value;
+          }
+          paramTableData[tableMapping.paramTable].push(paramTableRowData);
+        }
+        paramTableDatas.push(paramTableData);
+      }
+      params.append(tableMappings.paramName, JSON.stringify(paramTableDatas));
+    }
 
     return `${formUrl}?${params.toString()}`;
   }

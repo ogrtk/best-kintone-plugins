@@ -9,6 +9,8 @@ export default defineConfig({
   server: {
     headers: {
       "Content-Type": "application/javascript; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Private-Network": "true",
     },
     https: {
       cert: fs.readFileSync(
